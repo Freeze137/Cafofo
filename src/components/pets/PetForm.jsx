@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import { Field, TextInput, Select } from '../ui/Field'
 
-// Espécies e portes disponíveis.
+// ── Opções fixas dos selects ──────────────────
 const ESPECIES = ['Cachorro', 'Gato', 'Pássaro', 'Outro']
 const PORTES = ['Pequeno', 'Médio', 'Grande']
 
-// Formulário de criação/edição de pet (usado dentro de um Modal).
+// ─────────────────────────────────────────────────────────────────────────
+// PetForm — Formulário de criação/edição de pet (usado dentro de um Modal).
 // Recebe `initialData` para edição e dispara `onSubmit` com os dados válidos.
+// ─────────────────────────────────────────────────────────────────────────
 export default function PetForm({ initialData, onSubmit, onCancel }) {
+  // ── Estado do formulário (pré-preenchido na edição) ──
   const [form, setForm] = useState({
     nome: initialData?.nome || '',
     especie: initialData?.especie || 'Cachorro',
@@ -18,10 +21,11 @@ export default function PetForm({ initialData, onSubmit, onCancel }) {
   })
   const [errors, setErrors] = useState({})
 
+  // ── Atualiza um campo do formulário ───────────
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
-  // Validação de campos obrigatórios.
+  // ── Validação de campos obrigatórios ──────────
   const validate = () => {
     const e = {}
     if (!form.nome.trim()) e.nome = 'Informe o nome do pet.'
@@ -32,12 +36,14 @@ export default function PetForm({ initialData, onSubmit, onCancel }) {
     return Object.keys(e).length === 0
   }
 
+  // ── Submit: valida e devolve os dados ao pai ──
   const handleSubmit = (event) => {
     event.preventDefault()
     if (!validate()) return
     onSubmit({ ...form, idade: Number(form.idade) })
   }
 
+  // ── Render ────────────────────────────────────
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Field label="Nome *" error={errors.nome}>

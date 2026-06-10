@@ -13,6 +13,7 @@ import { auth, googleProvider } from '../firebase/firebase'
 //     há credenciais configuradas em .env.
 // ─────────────────────────────────────────────────────────────────────────
 
+// ── Constantes do contexto ────────────────────
 const AuthContext = createContext(null)
 const SESSION_KEY = `${STORAGE_PREFIX}:session`
 const USERS_KEY = `${STORAGE_PREFIX}:users`
@@ -26,12 +27,15 @@ const DEMO_USER = {
   photoURL: null,
 }
 
-/* ----------------------- Helpers do modo LOCAL ----------------------- */
+// ─────────────────────────────────────────────────────────────────────────
+// Helpers do modo LOCAL (leem/gravam a "tabela" de usuários no localStorage)
+// ─────────────────────────────────────────────────────────────────────────
+
+// ── Lê os usuários e garante que o demo exista ──
 function readUsers() {
   try {
     const raw = localStorage.getItem(USERS_KEY)
     const users = raw ? JSON.parse(raw) : []
-    // Garante que o usuário demo sempre exista.
     if (!users.some((u) => u.email === DEMO_USER.email)) users.push(DEMO_USER)
     return users
   } catch {
@@ -39,15 +43,20 @@ function readUsers() {
   }
 }
 
+// ── Persiste a lista de usuários ──────────────
 function writeUsers(users) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users))
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// Provider — expõe a sessão e as ações de autenticação para a árvore React
+// ─────────────────────────────────────────────────────────────────────────
 export function AuthProvider({ children }) {
+  // ── Estado da sessão ──────────────────────────
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Restaura a sessão ao carregar o app (mantém o usuário logado).
+  // ── Efeito: restaura a sessão ao carregar o app ──
   useEffect(() => {
     if (USE_FIREBASE) {
       // No modo Firebase, escuta as mudanças de autenticação.
@@ -80,13 +89,13 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }, [])
 
-  /** Persiste a sessão local. */
+  // ── Persiste a sessão local ───────────────────
   const persistSession = (u) => {
     setUser(u)
     localStorage.setItem(SESSION_KEY, JSON.stringify(u))
   }
 
-  /** Login com e-mail e senha. */
+  // ── Login com e-mail e senha ──────────────────
   const login = async (email, senha) => {
     if (USE_FIREBASE) {
       const { signInWithEmailAndPassword } = await import('firebase/auth')
@@ -97,12 +106,12 @@ export function AuthProvider({ children }) {
       (u) => u.email === email.trim().toLowerCase() && u.senha === senha,
     )
     if (!found) throw new Error('E-mail ou senha inválidos.')
-    const { senha: _omit, ...safe } = found
+    const { senha: _omit, ...safe } = found // nunca guarda a senha na sessão
     persistSession(safe)
     return safe
   }
 
-  /** Cadastro de novo usuário. */
+  // ── Cadastro de novo usuário ──────────────────
   const register = async (nome, email, senha) => {
     if (USE_FIREBASE) {
       const { createUserWithEmailAndPassword, updateProfile } = await import(
@@ -123,7 +132,7 @@ export function AuthProvider({ children }) {
     return safe
   }
 
-  /** Login com Google (apenas modo Firebase). */
+  // ── Login com Google (apenas modo Firebase) ───
   const loginWithGoogle = async () => {
     if (!USE_FIREBASE) {
       // Fallback de demonstração no modo local.
@@ -139,7 +148,7 @@ export function AuthProvider({ children }) {
     await signInWithPopup(auth, googleProvider)
   }
 
-  /** Encerra a sessão. */
+  // ── Encerra a sessão (logout) ─────────────────
   const logout = async () => {
     if (USE_FIREBASE) {
       const { signOut } = await import('firebase/auth')
@@ -150,8 +159,9 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // As funções (login/register/etc.) são estáveis durante o ciclo de vida do
-  // provider, então memorizamos apenas em função de `user` e `loading`.
+  // ── Valor do contexto (memorizado) ────────────
+  // As funções são estáveis durante o ciclo de vida do provider, então
+  // memorizamos o objeto apenas em função de `user` e `loading`.
   const value = useMemo(
     () => ({ user, loading, login, register, loginWithGoogle, logout, isAuthenticated: !!user }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -161,7 +171,7 @@ export function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-/** Hook de acesso ao contexto de autenticação. */
+// ── Hook de acesso ao contexto de autenticação ──
 export function useAuth() {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useAuth deve ser usado dentro de <AuthProvider>')

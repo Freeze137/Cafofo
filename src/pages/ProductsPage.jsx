@@ -19,23 +19,26 @@ import { formatCurrency } from '../utils/format'
 // Tabela responsiva com Create, Read, Update e Delete.
 // ─────────────────────────────────────────────────────────────────────────
 export default function ProductsPage() {
+  // ── Estado da página ──────────────────────────
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
-
   const [formOpen, setFormOpen] = useState(false)
-  const [editing, setEditing] = useState(null)
-  const [toDelete, setToDelete] = useState(null)
+  const [editing, setEditing] = useState(null) // produto em edição (ou null = novo)
+  const [toDelete, setToDelete] = useState(null) // produto aguardando confirmação
 
+  // ── READ: carrega o catálogo de produtos ──────
   const load = async () => {
     setLoading(true)
     setProducts(await listProducts())
     setLoading(false)
   }
 
+  // ── Efeito: carrega ao montar a página ────────
   useEffect(() => {
     load()
   }, [])
 
+  // ── CREATE / UPDATE: salva o formulário ───────
   const handleSave = async (data) => {
     if (editing) await updateProduct(editing.id, data)
     else await createProduct(data)
@@ -44,16 +47,19 @@ export default function ProductsPage() {
     load()
   }
 
+  // ── DELETE: remove o produto selecionado ──────
   const handleDelete = async () => {
     await deleteProduct(toDelete.id)
     load()
   }
 
+  // ── Abrir o modal de novo produto ─────────────
   const openNew = () => {
     setEditing(null)
     setFormOpen(true)
   }
 
+  // ── Render ────────────────────────────────────
   return (
     <div>
       <PageHeader

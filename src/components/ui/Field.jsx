@@ -1,4 +1,5 @@
-// Campo de formulário reutilizável (label + input/select) com mensagem de erro.
+// ── Field: rótulo + conteúdo + mensagem de erro ──
+// Wrapper reutilizável que padroniza a aparência de cada campo de formulário.
 export function Field({ label, error, children }) {
   return (
     <label className="block">
@@ -9,6 +10,7 @@ export function Field({ label, error, children }) {
   )
 }
 
+// ── TextInput: <input> estilizado (fica vermelho em caso de erro) ──
 export function TextInput({ error, ...props }) {
   return (
     <input
@@ -18,6 +20,7 @@ export function TextInput({ error, ...props }) {
   )
 }
 
+// ── Select: <select> estilizado (fica vermelho em caso de erro) ──
 export function Select({ error, children, ...props }) {
   return (
     <select

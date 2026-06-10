@@ -23,17 +23,17 @@ import { formatDate } from '../utils/format'
 // Cada agendamento relaciona um pet e um serviço (chaves estrangeiras).
 // ─────────────────────────────────────────────────────────────────────────
 export default function AppointmentsPage() {
+  // ── Estado da página ──────────────────────────
   const { user } = useAuth()
   const [appointments, setAppointments] = useState([])
   const [pets, setPets] = useState([])
   const [services, setServices] = useState([])
   const [loading, setLoading] = useState(true)
-
   const [formOpen, setFormOpen] = useState(false)
-  const [editing, setEditing] = useState(null)
-  const [toDelete, setToDelete] = useState(null)
+  const [editing, setEditing] = useState(null) // agendamento em edição (ou null = novo)
+  const [toDelete, setToDelete] = useState(null) // agendamento aguardando confirmação
 
-  // READ — carrega agendamentos, pets e catálogo de serviços.
+  // ── READ: carrega agendamentos, pets e serviços ──
   const load = async () => {
     setLoading(true)
     const [apts, petList, svcList] = await Promise.all([
@@ -47,15 +47,17 @@ export default function AppointmentsPage() {
     setLoading(false)
   }
 
+  // ── Efeito: recarrega ao montar / trocar de usuário ──
   useEffect(() => {
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.id])
 
-  // Resolve os nomes relacionados (JOIN local pet/serviço).
+  // ── JOIN local: resolve nomes a partir dos ids ──
   const petName = (id) => pets.find((p) => p.id === id)?.nome || 'Pet removido'
   const service = (id) => services.find((s) => s.id === id)
 
+  // ── CREATE / UPDATE: salva o formulário ───────
   const handleSave = async (data) => {
     if (editing) await updateAppointment(editing.id, data)
     else await createAppointment(user.id, data)
@@ -64,16 +66,19 @@ export default function AppointmentsPage() {
     load()
   }
 
+  // ── DELETE: remove o agendamento selecionado ──
   const handleDelete = async () => {
     await deleteAppointment(toDelete.id)
     load()
   }
 
+  // ── Abrir o modal de novo agendamento ─────────
   const openNew = () => {
     setEditing(null)
     setFormOpen(true)
   }
 
+  // ── Render ────────────────────────────────────
   return (
     <div>
       <PageHeader

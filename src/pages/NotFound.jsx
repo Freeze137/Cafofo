@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { PawPrint } from 'lucide-react'
 
-// Página 404.
+// ── Página 404 (rota não encontrada) ──────────
 export default function NotFound() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-cream px-4 text-center">

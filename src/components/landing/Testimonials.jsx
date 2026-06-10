@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Star, Quote } from 'lucide-react'
 
-// Seção de depoimentos de clientes.
+// ── Dados dos depoimentos de clientes ─────────
 const TESTIMONIALS = [
   {
     name: 'Mariana Silva',

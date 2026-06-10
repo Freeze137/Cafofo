@@ -4,23 +4,29 @@ import { motion } from 'framer-motion'
 import { PawPrint, Menu, X, LogOut, LayoutDashboard } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
-// Navbar pública da landing page — responsiva (menu hamburguer no mobile).
+// ─────────────────────────────────────────────────────────────────────────
+// Navbar — Barra de navegação pública da landing page (responsiva).
+// ─────────────────────────────────────────────────────────────────────────
 export default function Navbar() {
+  // ── Estado e ações ────────────────────────────
   const { isAuthenticated, user, logout } = useAuth()
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false) // controla o menu mobile
   const navigate = useNavigate()
 
+  // ── Links âncora das seções da landing ────────
   const links = [
     { label: 'Serviços', href: '#servicos' },
     { label: 'Sobre', href: '#sobre' },
     { label: 'Depoimentos', href: '#depoimentos' },
   ]
 
+  // ── Logout: encerra a sessão e volta à home ───
   const handleLogout = async () => {
     await logout()
     navigate('/')
   }
 
+  // ── Render ────────────────────────────────────
   return (
     <motion.header
       initial={{ y: -40, opacity: 0 }}

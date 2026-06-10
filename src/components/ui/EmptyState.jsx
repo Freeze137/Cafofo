@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-// Estado vazio amigável para listas sem registros.
+// ── Estado vazio amigável para listas sem registros ──
 export default function EmptyState({ icon: Icon, title, description, action }) {
   return (
     <motion.div

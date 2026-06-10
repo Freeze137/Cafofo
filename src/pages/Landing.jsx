@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 
-// Página inicial pública (landing page) com todas as seções de marketing.
+// ── Página inicial pública (landing) com as seções de marketing ──
 export default function Landing() {
   return (
     <div className="min-h-screen">

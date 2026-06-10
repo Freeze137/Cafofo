@@ -16,27 +16,28 @@ import EmptyState from '../components/ui/EmptyState'
 // O estado da lista é mantido com useState e renderizado com .map().
 // ─────────────────────────────────────────────────────────────────────────
 export default function PetsPage() {
+  // ── Estado da página ──────────────────────────
   const { user } = useAuth()
   const [pets, setPets] = useState([])
   const [loading, setLoading] = useState(true)
-
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState(null) // pet em edição (ou null = novo)
-  const [toDelete, setToDelete] = useState(null)
+  const [toDelete, setToDelete] = useState(null) // pet aguardando confirmação de exclusão
 
-  // READ — carrega os pets do usuário.
+  // ── READ: carrega os pets do usuário ──────────
   const load = async () => {
     setLoading(true)
     setPets(await listPets(user.id))
     setLoading(false)
   }
 
+  // ── Efeito: recarrega ao montar / trocar de usuário ──
   useEffect(() => {
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.id])
 
-  // CREATE / UPDATE — salva o formulário.
+  // ── CREATE / UPDATE: salva o formulário ───────
   const handleSave = async (data) => {
     if (editing) {
       await updatePet(editing.id, data)
@@ -48,12 +49,13 @@ export default function PetsPage() {
     load()
   }
 
-  // DELETE — remove o pet selecionado.
+  // ── DELETE: remove o pet selecionado ──────────
   const handleDelete = async () => {
     await deletePet(toDelete.id)
     load()
   }
 
+  // ── Ações de abrir o modal (novo / edição) ────
   const openNew = () => {
     setEditing(null)
     setFormOpen(true)
@@ -64,6 +66,7 @@ export default function PetsPage() {
     setFormOpen(true)
   }
 
+  // ── Render ────────────────────────────────────
   return (
     <div>
       <PageHeader
@@ -123,7 +126,7 @@ export default function PetsPage() {
   )
 }
 
-// Esqueleto de carregamento.
+// ── Esqueleto de carregamento (placeholder animado) ──
 function GridSkeleton() {
   return (
     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

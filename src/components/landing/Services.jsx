@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Droplets, Scissors, Hotel, Stethoscope } from 'lucide-react'
 
-// Seção de serviços oferecidos pelo pet shop.
+// ── Dados dos serviços oferecidos pelo pet shop ──
 const SERVICES = [
   {
     icon: Droplets,

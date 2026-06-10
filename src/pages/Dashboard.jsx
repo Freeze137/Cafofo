@@ -8,13 +8,16 @@ import { listAppointments } from '../services/appointmentService'
 import { listProducts } from '../services/productService'
 import PageHeader from '../components/ui/PageHeader'
 
-// Visão geral do dashboard — cards de resumo com contagens (KPIs).
+// ─────────────────────────────────────────────────────────────────────────
+// DASHBOARD — Visão geral com cards de resumo (KPIs).
+// ─────────────────────────────────────────────────────────────────────────
 export default function Dashboard() {
+  // ── Estado da página ──────────────────────────
   const { user } = useAuth()
   const [stats, setStats] = useState({ pets: 0, appointments: 0, products: 0 })
 
+  // ── READ: carrega as contagens em paralelo ────
   useEffect(() => {
-    // Carrega as contagens de cada coleção em paralelo.
     Promise.all([
       listPets(user.id),
       listAppointments(user.id),
@@ -28,12 +31,14 @@ export default function Dashboard() {
     })
   }, [user.id])
 
+  // ── Configuração dos cards (KPIs) ─────────────
   const cards = [
     { to: '/app/pets', label: 'Meus Pets', value: stats.pets, icon: Dog, color: 'from-brand-400 to-brand-600' },
     { to: '/app/agendamentos', label: 'Agendamentos', value: stats.appointments, icon: CalendarDays, color: 'from-sky-400 to-sky-600' },
     { to: '/app/produtos', label: 'Produtos', value: stats.products, icon: ShoppingBag, color: 'from-emerald-400 to-emerald-600' },
   ]
 
+  // ── Render ────────────────────────────────────
   return (
     <div>
       <PageHeader
@@ -41,6 +46,7 @@ export default function Dashboard() {
         description="Aqui está um resumo da sua conta no CAFOFOPELUDOS."
       />
 
+      {/* Grade de cards de resumo */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((c, i) => (
           <motion.div

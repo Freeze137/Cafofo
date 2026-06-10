@@ -1,13 +1,17 @@
 import { motion } from 'framer-motion'
 import { Dog, Cat, Bird, Pencil, Trash2 } from 'lucide-react'
 
-// Mapeia espécie → ícone correspondente.
+// ── Mapeia a espécie do pet → ícone correspondente ──
 const ICONS = { Cachorro: Dog, Gato: Cat, Pássaro: Bird }
 
-// Card de exibição de um pet com ações de editar e excluir.
+// ─────────────────────────────────────────────────────────────────────────
+// PetCard — Card de exibição de um pet com ações de editar e excluir.
+// ─────────────────────────────────────────────────────────────────────────
 export default function PetCard({ pet, onEdit, onDelete }) {
+  // ── Escolhe o ícone (cai no Dog se a espécie não tiver ícone) ──
   const Icon = ICONS[pet.especie] || Dog
 
+  // ── Render ────────────────────────────────────
   return (
     <motion.article
       layout

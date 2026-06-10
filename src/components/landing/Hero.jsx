@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { PawPrint, Heart, Sparkles, ArrowRight } from 'lucide-react'
 
-// Hero Section da landing page — chamada para ação principal.
+// ── Hero Section da landing page — chamada para ação principal ──
 export default function Hero() {
   return (
     <section className="relative overflow-hidden">
@@ -61,6 +61,7 @@ export default function Hero() {
   )
 }
 
+// ── Estatística (número + rótulo) exibida no Hero ──
 function Stat({ value, label }) {
   return (
     <div>
@@ -70,6 +71,7 @@ function Stat({ value, label }) {
   )
 }
 
+// ── Selo flutuante decorativo sobre a ilustração ──
 function FloatingBadge({ className, icon: Icon, text, delay = 0 }) {
   return (
     <motion.div

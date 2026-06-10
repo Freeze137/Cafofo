@@ -9,6 +9,7 @@ export default function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth()
   const location = useLocation()
 
+  // ── Enquanto checa a sessão: mostra um spinner ──
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -17,9 +18,11 @@ export default function ProtectedRoute({ children }) {
     )
   }
 
+  // ── Sem login: redireciona guardando a rota de origem ──
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
+  // ── Logado: libera o conteúdo protegido ───────
   return children
 }

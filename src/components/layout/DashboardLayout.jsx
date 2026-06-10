@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
-// Itens de navegação da área logada.
+// ── Itens de navegação da área logada ─────────
 const NAV = [
   { to: '/app', label: 'Visão geral', icon: LayoutDashboard, end: true },
   { to: '/app/pets', label: 'Meus Pets', icon: Dog },
@@ -22,17 +22,23 @@ const NAV = [
   { to: '/app/relatorio', label: 'Relatório', icon: BarChart3 },
 ]
 
-// Layout com sidebar para o dashboard do cliente.
+// ─────────────────────────────────────────────────────────────────────────
+// DashboardLayout — Layout com sidebar para o dashboard do cliente.
+// Renderiza as páginas filhas via <Outlet> e trata o menu mobile (drawer).
+// ─────────────────────────────────────────────────────────────────────────
 export default function DashboardLayout() {
+  // ── Estado e ações ────────────────────────────
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  // ── Logout: encerra a sessão e volta à home ───
   const handleLogout = async () => {
     await logout()
     navigate('/')
   }
 
+  // ── Conteúdo da sidebar (reaproveitado no desktop e no mobile) ──
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       <Link
@@ -85,6 +91,7 @@ export default function DashboardLayout() {
     </div>
   )
 
+  // ── Render ────────────────────────────────────
   return (
     <div className="flex min-h-screen bg-slate-50">
       {/* Sidebar desktop */}

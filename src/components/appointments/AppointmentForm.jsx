@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { Field, TextInput, Select } from '../ui/Field'
 import { APPOINTMENT_STATUSES, DEFAULT_STATUS } from '../../constants/appointmentStatus'
 
-// Formulário de agendamento de serviço.
+// ─────────────────────────────────────────────────────────────────────────
+// AppointmentForm — Formulário de agendamento de serviço.
 // Permite escolher o pet, o serviço, a data, o horário e o status.
-// `pets` e `services` vêm do banco; os selects ficam vazios caso não haja pets.
+// `pets` e `services` vêm do banco; sem pets cadastrados não é possível agendar.
+// ─────────────────────────────────────────────────────────────────────────
 export default function AppointmentForm({
   initialData,
   pets,
@@ -12,6 +14,7 @@ export default function AppointmentForm({
   onSubmit,
   onCancel,
 }) {
+  // ── Estado do formulário (pré-seleciona o 1º pet/serviço) ──
   const [form, setForm] = useState({
     petId: initialData?.petId || pets[0]?.id || '',
     serviceId: initialData?.serviceId || services[0]?.id || '',
@@ -21,9 +24,11 @@ export default function AppointmentForm({
   })
   const [errors, setErrors] = useState({})
 
+  // ── Atualiza um campo do formulário ───────────
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
+  // ── Validação de campos obrigatórios ──────────
   const validate = () => {
     const e = {}
     if (!form.petId) e.petId = 'Selecione um pet.'
@@ -34,13 +39,14 @@ export default function AppointmentForm({
     return Object.keys(e).length === 0
   }
 
+  // ── Submit: valida e devolve os dados ao pai ──
   const handleSubmit = (event) => {
     event.preventDefault()
     if (!validate()) return
     onSubmit(form)
   }
 
-  // Sem pets cadastrados não é possível agendar.
+  // ── Guarda: sem pets cadastrados não dá para agendar ──
   if (pets.length === 0) {
     return (
       <div className="rounded-xl bg-amber-50 p-4 text-amber-700">
@@ -54,6 +60,7 @@ export default function AppointmentForm({
     )
   }
 
+  // ── Render ────────────────────────────────────
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Field label="Pet *" error={errors.petId}>

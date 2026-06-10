@@ -19,12 +19,14 @@ import { formatDate, formatCurrency } from '../utils/format'
 // .map() + .find() para montar uma linha desnormalizada por agendamento.
 // ─────────────────────────────────────────────────────────────────────────
 export default function ReportPage() {
+  // ── Estado da página ──────────────────────────
   const { user } = useAuth()
   const [appointments, setAppointments] = useState([])
   const [pets, setPets] = useState([])
   const [services, setServices] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // ── READ: carrega as três entidades em paralelo ──
   useEffect(() => {
     Promise.all([
       listAppointments(user.id),
@@ -38,9 +40,9 @@ export default function ReportPage() {
     })
   }, [user.id])
 
-  // ── O JOIN propriamente dito ──────────────────────────────────────────
-  // Para cada agendamento, busca o pet e o serviço correspondentes pelo id
-  // e produz uma linha "achatada" com todos os dados relacionados.
+  // ── O JOIN propriamente dito ──────────────────
+  // Para cada agendamento, busca o pet e o serviço pelo id e produz uma
+  // linha "achatada" com todos os dados relacionados.
   const rows = useMemo(() => {
     return appointments.map((apt) => {
       const pet = pets.find((p) => p.id === apt.petId)
@@ -59,16 +61,18 @@ export default function ReportPage() {
     })
   }, [appointments, pets, services, user.nome])
 
-  // Métricas agregadas a partir do resultado do JOIN.
+  // ── Métricas agregadas a partir do JOIN ───────
   const totalReceita = rows
     .filter((r) => r.status !== 'Cancelado')
     .reduce((acc, r) => acc + Number(r.preco), 0)
   const concluidos = rows.filter((r) => r.status === 'Concluído').length
 
+  // ── Estado de carregamento ────────────────────
   if (loading) {
     return <div className="h-96 animate-pulse rounded-2xl bg-slate-100" />
   }
 
+  // ── Render ────────────────────────────────────
   return (
     <div>
       <PageHeader
@@ -147,6 +151,7 @@ export default function ReportPage() {
   )
 }
 
+// ── Cartão de métrica (KPI) do topo do relatório ──
 function MetricCard({ icon: Icon, label, value, color }) {
   return (
     <div className="card flex items-center justify-between">

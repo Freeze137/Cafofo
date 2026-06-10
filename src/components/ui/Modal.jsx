@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
 
-// Modal acessível e animado (usado nos formulários de CRUD).
+// ── Modal acessível e animado (usado nos formulários de CRUD) ──
 export default function Modal({ open, onClose, title, children }) {
   return (
     <AnimatePresence>

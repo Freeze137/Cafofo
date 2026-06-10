@@ -5,8 +5,11 @@ import { useAuth } from '../context/AuthContext'
 import { Field, TextInput } from '../components/ui/Field'
 import { AuthLayout, Divider, GoogleIcon } from './Login'
 
-// Tela de cadastro de novo usuário.
+// ─────────────────────────────────────────────────────────────────────────
+// REGISTER — Cadastro de novo usuário (com validação de senha).
+// ─────────────────────────────────────────────────────────────────────────
 export default function Register() {
+  // ── Hooks e estado do formulário ──────────────
   const { register, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
 
@@ -15,9 +18,11 @@ export default function Register() {
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // ── Atualiza um campo do formulário ───────────
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
+  // ── Validação (e-mail, tamanho e confirmação da senha) ──
   const validate = () => {
     const e = {}
     if (!form.nome.trim()) e.nome = 'Informe seu nome.'
@@ -29,6 +34,7 @@ export default function Register() {
     return Object.keys(e).length === 0
   }
 
+  // ── Submit: cria a conta e entra ──────────────
   const handleSubmit = async (event) => {
     event.preventDefault()
     setServerError('')
@@ -44,6 +50,7 @@ export default function Register() {
     }
   }
 
+  // ── Cadastro social (Google) ──────────────────
   const handleGoogle = async () => {
     try {
       await loginWithGoogle()
@@ -53,6 +60,7 @@ export default function Register() {
     }
   }
 
+  // ── Render ────────────────────────────────────
   return (
     <AuthLayout title="Crie sua conta" subtitle="É rápido, fácil e gratuito 🐶">
       {serverError && (

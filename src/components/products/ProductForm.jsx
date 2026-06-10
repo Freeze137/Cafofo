@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import { Field, TextInput, Select } from '../ui/Field'
 
+// ── Categorias disponíveis no select ──────────
 const CATEGORIAS = ['Alimentação', 'Brinquedos', 'Higiene', 'Saúde', 'Acessórios']
 
-// Formulário de criação/edição de produto da lojinha.
+// ─────────────────────────────────────────────────────────────────────────
+// ProductForm — Formulário de criação/edição de produto da lojinha.
+// ─────────────────────────────────────────────────────────────────────────
 export default function ProductForm({ initialData, onSubmit, onCancel }) {
+  // ── Estado do formulário (pré-preenchido na edição) ──
   const [form, setForm] = useState({
     nome: initialData?.nome || '',
     categoria: initialData?.categoria || 'Alimentação',
@@ -13,9 +17,11 @@ export default function ProductForm({ initialData, onSubmit, onCancel }) {
   })
   const [errors, setErrors] = useState({})
 
+  // ── Atualiza um campo do formulário ───────────
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
+  // ── Validação (nome, preço e estoque) ─────────
   const validate = () => {
     const e = {}
     if (!form.nome.trim()) e.nome = 'Informe o nome do produto.'
@@ -25,6 +31,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel }) {
     return Object.keys(e).length === 0
   }
 
+  // ── Submit: valida e converte números antes de salvar ──
   const handleSubmit = (event) => {
     event.preventDefault()
     if (!validate()) return
@@ -35,6 +42,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel }) {
     })
   }
 
+  // ── Render ────────────────────────────────────
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Field label="Nome *" error={errors.nome}>

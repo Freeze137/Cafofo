@@ -31,11 +31,12 @@ import ReportPage from './pages/ReportPage'
 //        /app/relatorio  → Relatório com JOIN
 // ─────────────────────────────────────────────────────────────────────────
 export default function App() {
-  // Semeia o banco local na primeira execução (dados de demonstração).
+  // ── Efeito: semeia o banco local na 1ª execução (dados demo) ──
   useEffect(() => {
     runSeed()
   }, [])
 
+  // ── Render (árvore de rotas) ──────────────────
   return (
     <Routes>
       {/* Rotas públicas */}

@@ -1,6 +1,6 @@
 import { PawPrint, Instagram, Facebook, Mail, MapPin } from 'lucide-react'
 
-// Rodapé institucional da landing page.
+// ── Rodapé institucional da landing page ──────
 export default function Footer() {
   return (
     <footer id="sobre" className="border-t border-brand-100 bg-brand-900 text-brand-50">

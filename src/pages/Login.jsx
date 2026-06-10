@@ -5,21 +5,26 @@ import { PawPrint, Mail, Lock, LogIn } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { Field, TextInput } from '../components/ui/Field'
 
-// Tela de login (e-mail e senha + Google).
+// ─────────────────────────────────────────────────────────────────────────
+// LOGIN — Autenticação por e-mail/senha (+ Google).
+// ─────────────────────────────────────────────────────────────────────────
 export default function Login() {
+  // ── Hooks e estado do formulário ──────────────
   const { login, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const from = location.state?.from?.pathname || '/app'
+  const from = location.state?.from?.pathname || '/app' // rota de origem (volta após login)
 
   const [form, setForm] = useState({ email: '', senha: '' })
   const [errors, setErrors] = useState({})
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // ── Atualiza um campo do formulário ───────────
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
+  // ── Validação dos campos obrigatórios ─────────
   const validate = () => {
     const e = {}
     if (!form.email.trim()) e.email = 'Informe seu e-mail.'
@@ -28,6 +33,7 @@ export default function Login() {
     return Object.keys(e).length === 0
   }
 
+  // ── Submit: entra com e-mail e senha ──────────
   const handleSubmit = async (event) => {
     event.preventDefault()
     setServerError('')
@@ -43,6 +49,7 @@ export default function Login() {
     }
   }
 
+  // ── Login social (Google) ─────────────────────
   const handleGoogle = async () => {
     setServerError('')
     try {
@@ -53,6 +60,7 @@ export default function Login() {
     }
   }
 
+  // ── Render ────────────────────────────────────
   return (
     <AuthLayout title="Bem-vindo de volta!" subtitle="Entre para cuidar do seu peludo 🐾">
       {serverError && (
@@ -114,9 +122,11 @@ export default function Login() {
   )
 }
 
-/* ----------------------- Componentes auxiliares ----------------------- */
+// ─────────────────────────────────────────────────────────────────────────
+// Componentes auxiliares (reutilizados também pelo Register)
+// ─────────────────────────────────────────────────────────────────────────
 
-// Layout compartilhado entre Login e Register.
+// ── Layout compartilhado entre Login e Register ──
 export function AuthLayout({ title, subtitle, children }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-50 via-cream to-brand-100 px-4 py-10">
@@ -141,6 +151,7 @@ export function AuthLayout({ title, subtitle, children }) {
   )
 }
 
+// ── Divisória "ou" entre login normal e social ──
 export function Divider() {
   return (
     <div className="my-5 flex items-center gap-3 text-sm text-slate-400">
@@ -149,6 +160,7 @@ export function Divider() {
   )
 }
 
+// ── Ícone do Google (SVG) para o botão social ──
 export function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 48 48">

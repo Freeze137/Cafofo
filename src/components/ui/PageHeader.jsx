@@ -1,4 +1,4 @@
-// Cabeçalho padrão das páginas do dashboard (título + descrição + ação).
+// ── Cabeçalho padrão das páginas do dashboard (título + descrição + ação) ──
 export default function PageHeader({ title, description, action }) {
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
