@@ -7,6 +7,7 @@ import { listPets } from '../services/petService'
 import { listServices } from '../services/serviceCatalog'
 import PageHeader from '../components/ui/PageHeader'
 import EmptyState from '../components/ui/EmptyState'
+import { formatDate, formatCurrency } from '../utils/format'
 
 // ─────────────────────────────────────────────────────────────────────────
 // RELATÓRIO COM JOIN (Parte 3 da avaliação)
@@ -78,7 +79,7 @@ export default function ReportPage() {
       {/* Cartões de métricas */}
       <div className="mb-8 grid gap-5 sm:grid-cols-3">
         <MetricCard icon={CalendarCheck} label="Agendamentos" value={rows.length} color="from-sky-400 to-sky-600" />
-        <MetricCard icon={DollarSign} label="Receita prevista" value={`R$ ${totalReceita.toFixed(2)}`} color="from-emerald-400 to-emerald-600" />
+        <MetricCard icon={DollarSign} label="Receita prevista" value={formatCurrency(totalReceita)} color="from-emerald-400 to-emerald-600" />
         <MetricCard icon={BarChart3} label="Concluídos" value={concluidos} color="from-brand-400 to-brand-600" />
       </div>
 
@@ -118,7 +119,7 @@ export default function ReportPage() {
                       {formatDate(r.data)} às {r.hora}
                     </td>
                     <td className="px-6 py-4 font-semibold text-brand-600">
-                      R$ {Number(r.preco).toFixed(2)}
+                      {formatCurrency(r.preco)}
                     </td>
                     <td className="px-6 py-4">
                       <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
@@ -134,7 +135,7 @@ export default function ReportPage() {
                     Total (exceto cancelados)
                   </td>
                   <td className="px-6 py-4 text-brand-600" colSpan={2}>
-                    R$ {totalReceita.toFixed(2)}
+                    {formatCurrency(totalReceita)}
                   </td>
                 </tr>
               </tfoot>
@@ -158,10 +159,4 @@ function MetricCard({ icon: Icon, label, value, color }) {
       </div>
     </div>
   )
-}
-
-function formatDate(iso) {
-  if (!iso) return '—'
-  const [y, m, d] = iso.split('-')
-  return `${d}/${m}/${y}`
 }

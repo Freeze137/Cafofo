@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Field, TextInput, Select } from '../ui/Field'
-
-const STATUS = ['Pendente', 'Confirmado', 'Concluído', 'Cancelado']
+import { APPOINTMENT_STATUSES, DEFAULT_STATUS } from '../../constants/appointmentStatus'
 
 // Formulário de agendamento de serviço.
 // Permite escolher o pet, o serviço, a data, o horário e o status.
@@ -18,7 +17,7 @@ export default function AppointmentForm({
     serviceId: initialData?.serviceId || services[0]?.id || '',
     data: initialData?.data || '',
     hora: initialData?.hora || '',
-    status: initialData?.status || 'Pendente',
+    status: initialData?.status || DEFAULT_STATUS,
   })
   const [errors, setErrors] = useState({})
 
@@ -88,7 +87,7 @@ export default function AppointmentForm({
 
       <Field label="Status">
         <Select value={form.status} onChange={set('status')}>
-          {STATUS.map((s) => (
+          {APPOINTMENT_STATUSES.map((s) => (
             <option key={s}>{s}</option>
           ))}
         </Select>

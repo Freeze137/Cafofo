@@ -12,6 +12,7 @@ import Modal from '../components/ui/Modal'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import EmptyState from '../components/ui/EmptyState'
 import ProductForm from '../components/products/ProductForm'
+import { formatCurrency } from '../utils/format'
 
 // ─────────────────────────────────────────────────────────────────────────
 // CRUD 2 — PRODUTOS (lojinha do pet shop)
@@ -116,7 +117,7 @@ export default function ProductsPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 font-semibold text-brand-600">
-                        R$ {Number(p.preco).toFixed(2)}
+                        {formatCurrency(p.preco)}
                       </td>
                       <td className="px-6 py-4">
                         <span

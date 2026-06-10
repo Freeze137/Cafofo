@@ -1,4 +1,5 @@
 import * as local from './localDriver'
+import { DEFAULT_STATUS } from '../constants/appointmentStatus'
 
 // ─────────────────────────────────────────────────────────────────────────
 // Serviço de AGENDAMENTOS (CRUD 3)
@@ -11,6 +12,6 @@ const COLLECTION = 'appointments'
 
 export const listAppointments = (ownerId) => local.list(COLLECTION, { ownerId })
 export const createAppointment = (ownerId, data) =>
-  local.create(COLLECTION, { ownerId, status: 'Pendente', ...data })
+  local.create(COLLECTION, { ownerId, status: DEFAULT_STATUS, ...data })
 export const updateAppointment = (id, data) => local.update(COLLECTION, id, data)
 export const deleteAppointment = (id) => local.remove(COLLECTION, id)

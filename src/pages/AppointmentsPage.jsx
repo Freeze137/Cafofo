@@ -15,14 +15,8 @@ import Modal from '../components/ui/Modal'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import EmptyState from '../components/ui/EmptyState'
 import AppointmentForm from '../components/appointments/AppointmentForm'
-
-// Cores do badge conforme o status.
-const STATUS_STYLES = {
-  Pendente: 'bg-amber-100 text-amber-700',
-  Confirmado: 'bg-sky-100 text-sky-700',
-  Concluído: 'bg-emerald-100 text-emerald-700',
-  Cancelado: 'bg-red-100 text-red-600',
-}
+import { STATUS_STYLES } from '../constants/appointmentStatus'
+import { formatDate } from '../utils/format'
 
 // ─────────────────────────────────────────────────────────────────────────
 // CRUD 3 — AGENDAMENTOS
@@ -198,11 +192,4 @@ export default function AppointmentsPage() {
       />
     </div>
   )
-}
-
-// Formata a data ISO (yyyy-mm-dd) para o padrão brasileiro.
-function formatDate(iso) {
-  if (!iso) return '—'
-  const [y, m, d] = iso.split('-')
-  return `${d}/${m}/${y}`
 }
