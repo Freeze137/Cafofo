@@ -12,7 +12,6 @@ import * as local from './localDriver'
 const COLLECTION = 'pets'
 
 // ── 1. Operações Exportadas ──────────────────────────────────────────────
-/** Lista os pets de um usuário (filtro por dono). */
 
 /** 
  * Lista os pets de um usuário específico.
@@ -21,7 +20,6 @@ const COLLECTION = 'pets'
  */
 export const listPets = (ownerId) => local.list(COLLECTION, { ownerId })
 
-/** Cria um novo pet para o usuário. */
 /** 
  * Cadastra um novo pet no banco de dados vinculando-o ao usuário logado.
  * @param {string} ownerId - O ID do tutor do pet (usuário logado).
@@ -31,7 +29,6 @@ export const listPets = (ownerId) => local.list(COLLECTION, { ownerId })
 export const createPet = (ownerId, data) =>
   local.create(COLLECTION, { ownerId, ...data })
 
-/** Atualiza os dados de um pet. */
 /** 
  * Atualiza as informações de um pet já existente.
  * @param {string} id - O ID único do pet.
@@ -40,7 +37,6 @@ export const createPet = (ownerId, data) =>
  */
 export const updatePet = (id, data) => local.update(COLLECTION, id, data)
 
-/** Remove um pet. */
 /** 
  * Exclui um pet de forma irreversível.
  * @param {string} id - O ID único do pet.
