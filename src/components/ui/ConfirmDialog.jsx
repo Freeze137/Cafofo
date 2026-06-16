@@ -1,8 +1,14 @@
 import { AlertTriangle } from 'lucide-react'
 import Modal from './Modal'
 
+// ─────────────────────────────────────────────────────────────────────────
+// ConfirmDialog
+//
 // Diálogo de confirmação para ações destrutivas (ex.: excluir registro).
+// Exibe um modal de alerta com botões para confirmar ou cancelar a ação.
+// ─────────────────────────────────────────────────────────────────────────
 export default function ConfirmDialog({ open, onClose, onConfirm, title, message }) {
+  // ── 1. Renderização do Modal ───────────────────────────────────────────
   return (
     <Modal open={open} onClose={onClose} title={title || 'Confirmar exclusão'}>
       <div className="flex items-start gap-4">

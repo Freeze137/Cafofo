@@ -11,6 +11,8 @@ import { STORAGE_PREFIX } from './config'
 
 const key = (collection) => `${STORAGE_PREFIX}:${collection}`
 
+// ── 1. Utilitários e Helpers ─────────────────────────────────────────────
+
 /** Gera um identificador único simples. */
 export const uid = () =>
   `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
@@ -29,6 +31,8 @@ function readAll(collection) {
 function writeAll(collection, items) {
   localStorage.setItem(key(collection), JSON.stringify(items))
 }
+
+// ── 2. Operações CRUD ────────────────────────────────────────────────────
 
 /** READ — lista todos os documentos, opcionalmente filtrando por campo. */
 export async function list(collection, filter = {}) {
@@ -70,6 +74,8 @@ export async function remove(collection, id) {
   writeAll(collection, items)
   return true
 }
+
+// ── 3. Operações de Seed ─────────────────────────────────────────────────
 
 /** Semeia a coleção apenas se ela ainda não existir (primeira execução). */
 export function seedIfEmpty(collection, items) {

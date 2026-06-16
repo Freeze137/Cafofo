@@ -19,6 +19,7 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 
+// ── 1. Credenciais ───────────────────────────────────────────────────────
 // Credenciais do projeto (preencha em .env a partir de .env.example).
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -32,6 +33,7 @@ const firebaseConfig = {
 // Indica se há credenciais válidas configuradas.
 export const hasFirebaseConfig = Boolean(firebaseConfig.apiKey)
 
+// ── 2. Inicialização Condicional ─────────────────────────────────────────
 // Inicializa o Firebase apenas se houver configuração — evita quebrar o app
 // quando rodando no modo local (sem credenciais).
 let app = null

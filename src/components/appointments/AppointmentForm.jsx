@@ -3,9 +3,13 @@ import { Field, TextInput, Select } from '../ui/Field'
 
 const STATUS = ['Pendente', 'Confirmado', 'Concluído', 'Cancelado']
 
-// Formulário de agendamento de serviço.
+// ─────────────────────────────────────────────────────────────────────────
+// Formulário de Agendamentos
+//
 // Permite escolher o pet, o serviço, a data, o horário e o status.
-// `pets` e `services` vêm do banco; os selects ficam vazios caso não haja pets.
+// Recebe `pets` e `services` por props. Caso o usuário não tenha pets
+// cadastrados, bloqueia a renderização do formulário e exibe um aviso.
+// ─────────────────────────────────────────────────────────────────────────
 export default function AppointmentForm({
   initialData,
   pets,
@@ -13,6 +17,7 @@ export default function AppointmentForm({
   onSubmit,
   onCancel,
 }) {
+  // ── 1. Estados ─────────────────────────────────────────────────────────
   const [form, setForm] = useState({
     petId: initialData?.petId || pets[0]?.id || '',
     serviceId: initialData?.serviceId || services[0]?.id || '',
@@ -22,6 +27,7 @@ export default function AppointmentForm({
   })
   const [errors, setErrors] = useState({})
 
+  // ── 2. Handlers e Validação ────────────────────────────────────────────
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
@@ -41,7 +47,7 @@ export default function AppointmentForm({
     onSubmit(form)
   }
 
-  // Sem pets cadastrados não é possível agendar.
+  // ── 3. Renderização Condicional (Tratamento de Exceção) ────────────────
   if (pets.length === 0) {
     return (
       <div className="rounded-xl bg-amber-50 p-4 text-amber-700">
@@ -55,6 +61,7 @@ export default function AppointmentForm({
     )
   }
 
+  // ── 4. Renderização do Formulário ──────────────────────────────────────
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Field label="Pet *" error={errors.petId}>
