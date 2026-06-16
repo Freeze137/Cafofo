@@ -2,16 +2,25 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { PawPrint, Heart, Sparkles, ArrowRight } from 'lucide-react'
 
-// Hero Section da landing page — chamada para ação principal.
+// ─────────────────────────────────────────────────────────────────────────
+// Hero Section
+//
+// Primeira dobra (acima da linha de rolagem) da Landing Page.
+// Contém a principal chamada para ação (CTA), título de impacto, texto
+// persuasivo e uma ilustração animada para prender a atenção do usuário.
+// ─────────────────────────────────────────────────────────────────────────
 export default function Hero() {
   return (
     <section className="relative overflow-hidden">
-      {/* Blobs decorativos */}
+      {/* ── 1. Fundo Decorativo ─────────────────────────────────────────── */}
+      {/* Círculos coloridos e desfocados (blobs) posicionados em absolute. */}
       <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-brand-200/40 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 top-32 h-80 w-80 rounded-full bg-brand-300/30 blur-3xl" />
 
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 md:grid-cols-2 md:py-28">
-        {/* Texto */}
+        
+        {/* ── 2. Conteúdo de Texto (Esquerda) ───────────────────────────── */}
+        {/* Textos e botões que entram deslizando da esquerda para a direita. */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -36,6 +45,7 @@ export default function Hero() {
             </a>
           </div>
 
+          {/* Métricas de prova social */}
           <div className="mt-10 flex items-center gap-8">
             <Stat value="+2.5k" label="Pets felizes" />
             <Stat value="4.9★" label="Avaliação" />
@@ -43,7 +53,8 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* Ilustração */}
+        {/* ── 3. Ilustração Animada (Direita) ───────────────────────────── */}
+        {/* Bloco visual contendo o logo/ícone e selos de qualidade orbitando. */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -61,6 +72,8 @@ export default function Hero() {
   )
 }
 
+// ── 4. Subcomponente: Stat (Estatísticas) ────────────────────────────────
+// Componente puramente visual para exibir os números de destaque (ex: +2.5k).
 function Stat({ value, label }) {
   return (
     <div>
@@ -70,6 +83,8 @@ function Stat({ value, label }) {
   )
 }
 
+// ── 5. Subcomponente: FloatingBadge (Selos Flutuantes) ───────────────────
+// Selos pequenos com ícone e texto que surgem com um atraso (delay) ao redor da ilustração.
 function FloatingBadge({ className, icon: Icon, text, delay = 0 }) {
   return (
     <motion.div

@@ -1,7 +1,15 @@
 import { motion } from 'framer-motion'
 import { Droplets, Scissors, Hotel, Stethoscope } from 'lucide-react'
 
-// Seção de serviços oferecidos pelo pet shop.
+// ─────────────────────────────────────────────────────────────────────────
+// Seção de Serviços
+//
+// Exibe em um grid os principais serviços oferecidos pelo pet shop,
+// utilizando os cards animados do Framer Motion.
+// ─────────────────────────────────────────────────────────────────────────
+
+// ── 1. Dados Estáticos ───────────────────────────────────────────────────
+// Lista de serviços definida fora do componente para não ser recriada a cada renderização.
 const SERVICES = [
   {
     icon: Droplets,
@@ -30,6 +38,7 @@ const SERVICES = [
 ]
 
 export default function Services() {
+  // ── 2. Renderização da Seção ───────────────────────────────────────────
   return (
     <section id="servicos" className="mx-auto max-w-6xl px-4 py-20">
       <div className="mx-auto max-w-2xl text-center">

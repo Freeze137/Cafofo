@@ -1,10 +1,18 @@
 import { useState } from 'react'
 import { Field, TextInput, Select } from '../ui/Field'
 
+// ─────────────────────────────────────────────────────────────────────────
+// Formulário de Produtos
+//
+// Formulário de criação/edição de produto do catálogo/lojinha.
+// Recebe `initialData` para edição e dispara `onSubmit` com os dados válidos.
+// ─────────────────────────────────────────────────────────────────────────
+
+// ── 1. Configurações e Dados Estáticos ───────────────────────────────────
 const CATEGORIAS = ['Alimentação', 'Brinquedos', 'Higiene', 'Saúde', 'Acessórios']
 
-// Formulário de criação/edição de produto da lojinha.
 export default function ProductForm({ initialData, onSubmit, onCancel }) {
+  // ── 2. Estados ─────────────────────────────────────────────────────────
   const [form, setForm] = useState({
     nome: initialData?.nome || '',
     categoria: initialData?.categoria || 'Alimentação',
@@ -13,6 +21,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel }) {
   })
   const [errors, setErrors] = useState({})
 
+  // ── 3. Handlers e Validação ────────────────────────────────────────────
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
@@ -35,8 +44,10 @@ export default function ProductForm({ initialData, onSubmit, onCancel }) {
     })
   }
 
+  // ── 4. Renderização do Formulário ──────────────────────────────────────
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Linha 1: Nome */}
       <Field label="Nome *" error={errors.nome}>
         <TextInput
           value={form.nome}
@@ -46,6 +57,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel }) {
         />
       </Field>
 
+      {/* Linha 2: Categoria */}
       <Field label="Categoria">
         <Select value={form.categoria} onChange={set('categoria')}>
           {CATEGORIAS.map((c) => (
@@ -54,6 +66,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel }) {
         </Select>
       </Field>
 
+      {/* Linha 3: Preço e Estoque (Lado a lado) */}
       <div className="grid grid-cols-2 gap-4">
         <Field label="Preço (R$) *" error={errors.preco}>
           <TextInput
@@ -78,6 +91,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel }) {
         </Field>
       </div>
 
+      {/* Ações: Cancelar e Salvar */}
       <div className="flex justify-end gap-3 pt-2">
         <button type="button" onClick={onCancel} className="btn-ghost">
           Cancelar

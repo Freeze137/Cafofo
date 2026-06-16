@@ -8,13 +8,19 @@ import { listAppointments } from '../services/appointmentService'
 import { listProducts } from '../services/productService'
 import PageHeader from '../components/ui/PageHeader'
 
-// Visão geral do dashboard — cards de resumo com contagens (KPIs).
+// ─────────────────────────────────────────────────────────────────────────
+// Visão Geral (Dashboard)
+//
+// Página inicial após o login. Apresenta um resumo da conta do usuário
+// através de indicadores chave de performance (KPIs) e atalhos rápidos.
+// ─────────────────────────────────────────────────────────────────────────
 export default function Dashboard() {
+  // ── 1. Estados e Efeitos ───────────────────────────────────────────────
   const { user } = useAuth()
   const [stats, setStats] = useState({ pets: 0, appointments: 0, products: 0 })
 
   useEffect(() => {
-    // Carrega as contagens de cada coleção em paralelo.
+    // Carrega as contagens de cada coleção em paralelo para otimizar o carregamento.
     Promise.all([
       listPets(user.id),
       listAppointments(user.id),
@@ -28,19 +34,24 @@ export default function Dashboard() {
     })
   }, [user.id])
 
+  // ── 2. Configurações de UI ─────────────────────────────────────────────
+  // Array para gerar os cards dinamicamente, evitando repetição de código no JSX.
   const cards = [
     { to: '/app/pets', label: 'Meus Pets', value: stats.pets, icon: Dog, color: 'from-brand-400 to-brand-600' },
     { to: '/app/agendamentos', label: 'Agendamentos', value: stats.appointments, icon: CalendarDays, color: 'from-sky-400 to-sky-600' },
     { to: '/app/produtos', label: 'Produtos', value: stats.products, icon: ShoppingBag, color: 'from-emerald-400 to-emerald-600' },
   ]
 
+  // ── 3. Renderização ────────────────────────────────────────────────────
   return (
     <div>
+      {/* Cabeçalho de Boas-Vindas */}
       <PageHeader
         title={`Olá, ${user.nome?.split(' ')[0]}! 👋`}
         description="Aqui está um resumo da sua conta no CAFOFOPELUDOS."
       />
 
+      {/* Grid de Métricas (KPIs) */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((c, i) => (
           <motion.div
@@ -68,7 +79,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Banner de boas-vindas */}
+      {/* Banner Promocional / Call to Action */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

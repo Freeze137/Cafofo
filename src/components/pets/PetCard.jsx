@@ -1,13 +1,22 @@
 import { motion } from 'framer-motion'
 import { Dog, Cat, Bird, Pencil, Trash2 } from 'lucide-react'
 
-// Mapeia espécie → ícone correspondente.
+// ─────────────────────────────────────────────────────────────────────────
+// PetCard
+//
+// Card de exibição individual de um pet. Apresenta as informações básicas
+// e fornece botões de ação para editar ou excluir o registro.
+// Utiliza Framer Motion para animações de entrada, saída (layout) e hover.
+// ─────────────────────────────────────────────────────────────────────────
+
+// ── 1. Configurações ─────────────────────────────────────────────────────
+// Mapeia a espécie do pet para o ícone correspondente da biblioteca Lucide.
 const ICONS = { Cachorro: Dog, Gato: Cat, Pássaro: Bird }
 
-// Card de exibição de um pet com ações de editar e excluir.
 export default function PetCard({ pet, onEdit, onDelete }) {
   const Icon = ICONS[pet.especie] || Dog
 
+  // ── 2. Renderização do Card ────────────────────────────────────────────
   return (
     <motion.article
       layout
@@ -17,6 +26,7 @@ export default function PetCard({ pet, onEdit, onDelete }) {
       whileHover={{ y: -4 }}
       className="card group flex flex-col"
     >
+      {/* Cabeçalho do Card (Ícone de espécie e Badge de porte) */}
       <div className="flex items-start justify-between">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-soft">
           <Icon size={30} />
@@ -26,11 +36,13 @@ export default function PetCard({ pet, onEdit, onDelete }) {
         </span>
       </div>
 
+      {/* Informações Principais (Nome, Espécie e Raça) */}
       <h3 className="mt-4 text-xl font-bold text-slate-800">{pet.nome}</h3>
       <p className="text-slate-500">
         {pet.especie} • {pet.raca}
       </p>
 
+      {/* Grade de Detalhes Adicionais (Idade e Cor) */}
       <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
         <div className="rounded-xl bg-slate-50 px-3 py-2">
           <dt className="text-slate-400">Idade</dt>
@@ -42,6 +54,7 @@ export default function PetCard({ pet, onEdit, onDelete }) {
         </div>
       </dl>
 
+      {/* Rodapé com Botões de Ação */}
       <div className="mt-5 flex gap-2 border-t border-slate-100 pt-4">
         <button
           onClick={() => onEdit(pet)}

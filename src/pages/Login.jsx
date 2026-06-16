@@ -5,8 +5,14 @@ import { PawPrint, Mail, Lock, LogIn } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { Field, TextInput } from '../components/ui/Field'
 
-// Tela de login (e-mail e senha + Google).
+// ─────────────────────────────────────────────────────────────────────────
+// Tela de Login
+//
+// Permite a entrada de usuários existentes via E-mail/Senha ou Google.
+// Redireciona o usuário para a página de onde ele veio após o login.
+// ─────────────────────────────────────────────────────────────────────────
 export default function Login() {
+  // ── 1. Estados e Configurações de Rota ─────────────────────────────────
   const { login, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -17,6 +23,7 @@ export default function Login() {
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // ── 2. Handlers e Validação ────────────────────────────────────────────
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
@@ -53,12 +60,15 @@ export default function Login() {
     }
   }
 
+  // ── 3. Renderização do Login ───────────────────────────────────────────
   return (
     <AuthLayout title="Bem-vindo de volta!" subtitle="Entre para cuidar do seu peludo 🐾">
+      {/* Alerta de erro vindo do servidor ou local */}
       {serverError && (
         <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{serverError}</div>
       )}
 
+      {/* Formulário Tradicional */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <Field label="E-mail" error={errors.email}>
           <div className="relative">
@@ -96,10 +106,12 @@ export default function Login() {
 
       <Divider />
 
+      {/* Botão de Login Social */}
       <button onClick={handleGoogle} className="btn-ghost w-full">
         <GoogleIcon /> Entrar com Google
       </button>
 
+      {/* Links de Rodapé */}
       <p className="mt-6 text-center text-sm text-slate-500">
         Ainda não tem conta?{' '}
         <Link to="/register" className="font-semibold text-brand-600 hover:underline">
@@ -114,9 +126,9 @@ export default function Login() {
   )
 }
 
-/* ----------------------- Componentes auxiliares ----------------------- */
-
-// Layout compartilhado entre Login e Register.
+// ── 4. Subcomponente: AuthLayout ─────────────────────────────────────────
+// Layout base que contém o fundo animado, logo centralizada e o cartão branco.
+// Exportado para ser reaproveitado no Register.jsx.
 export function AuthLayout({ title, subtitle, children }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-50 via-cream to-brand-100 px-4 py-10">
@@ -141,6 +153,8 @@ export function AuthLayout({ title, subtitle, children }) {
   )
 }
 
+// ── 5. Subcomponente: Divider ────────────────────────────────────────────
+// Linha divisória visual com texto "ou".
 export function Divider() {
   return (
     <div className="my-5 flex items-center gap-3 text-sm text-slate-400">
@@ -149,6 +163,8 @@ export function Divider() {
   )
 }
 
+// ── 6. Subcomponente: GoogleIcon ─────────────────────────────────────────
+// Ícone SVG otimizado do Google (não recarrega bibliotecas externas).
 export function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 48 48">

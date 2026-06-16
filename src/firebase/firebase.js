@@ -5,7 +5,7 @@
 // Firestore e Storage). As credenciais são lidas de variáveis de ambiente
 // (Vite → import.meta.env) para nunca ficarem hardcoded no código.
 //
-// ⚠️ IMPORTANTE: O app está configurado para FUNCIONAR SEM Firebase por
+//  IMPORTANTE: O app está configurado para FUNCIONAR SEM Firebase por
 // padrão (usando um backend local em localStorage — ver src/services/).
 // Assim ele roda imediatamente após `npm install && npm run dev`, sem
 // exigir nenhuma credencial. Para ativar o backend real do Firebase:

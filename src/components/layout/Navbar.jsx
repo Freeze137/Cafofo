@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { PawPrint, Menu, X, LogOut, LayoutDashboard } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
-// Navbar pública da landing page — responsiva (menu hamburguer no mobile).
+// Navbar pública da landing page — responsiva 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth()
   const [open, setOpen] = useState(false)

@@ -5,8 +5,14 @@ import { useAuth } from '../context/AuthContext'
 import { Field, TextInput } from '../components/ui/Field'
 import { AuthLayout, Divider, GoogleIcon } from './Login'
 
-// Tela de cadastro de novo usuário.
+// ─────────────────────────────────────────────────────────────────────────
+// Tela de Cadastro
+//
+// Permite a criação de uma nova conta via E-mail/Senha ou Google.
+// Reaproveita os componentes visuais do Login (AuthLayout, Divider, etc).
+// ─────────────────────────────────────────────────────────────────────────
 export default function Register() {
+  // ── 1. Estados e Configurações de Rota ─────────────────────────────────
   const { register, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
 
@@ -15,6 +21,7 @@ export default function Register() {
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // ── 2. Handlers e Validação ────────────────────────────────────────────
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
@@ -53,12 +60,15 @@ export default function Register() {
     }
   }
 
+  // ── 3. Renderização do Cadastro ────────────────────────────────────────
   return (
     <AuthLayout title="Crie sua conta" subtitle="É rápido, fácil e gratuito 🐶">
+      {/* Alerta de erro vindo do servidor */}
       {serverError && (
         <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{serverError}</div>
       )}
 
+      {/* Formulário Tradicional */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <Field label="Nome completo" error={errors.nome}>
           <div className="relative">
@@ -87,6 +97,7 @@ export default function Register() {
           </div>
         </Field>
 
+        {/* Campos de Senha e Confirmação em Grid */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Senha" error={errors.senha}>
             <div className="relative">
@@ -119,10 +130,12 @@ export default function Register() {
 
       <Divider />
 
+      {/* Botão de Cadastro Social */}
       <button onClick={handleGoogle} className="btn-ghost w-full">
         <GoogleIcon /> Cadastrar com Google
       </button>
 
+      {/* Links de Rodapé */}
       <p className="mt-6 text-center text-sm text-slate-500">
         Já tem conta?{' '}
         <Link to="/login" className="font-semibold text-brand-600 hover:underline">

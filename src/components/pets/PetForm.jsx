@@ -1,13 +1,19 @@
 import { useState } from 'react'
 import { Field, TextInput, Select } from '../ui/Field'
 
-// Espécies e portes disponíveis.
+// ─────────────────────────────────────────────────────────────────────────
+// Formulário de Pets
+//
+// Formulário de criação/edição de pet (usado dentro de um Modal).
+// Recebe `initialData` para edição e dispara `onSubmit` com os dados válidos.
+// ─────────────────────────────────────────────────────────────────────────
+
+// ── 1. Configurações e Dados Estáticos ───────────────────────────────────
 const ESPECIES = ['Cachorro', 'Gato', 'Pássaro', 'Outro']
 const PORTES = ['Pequeno', 'Médio', 'Grande']
 
-// Formulário de criação/edição de pet (usado dentro de um Modal).
-// Recebe `initialData` para edição e dispara `onSubmit` com os dados válidos.
 export default function PetForm({ initialData, onSubmit, onCancel }) {
+  // ── 2. Estados ─────────────────────────────────────────────────────────
   const [form, setForm] = useState({
     nome: initialData?.nome || '',
     especie: initialData?.especie || 'Cachorro',
@@ -18,10 +24,10 @@ export default function PetForm({ initialData, onSubmit, onCancel }) {
   })
   const [errors, setErrors] = useState({})
 
+  // ── 3. Handlers e Validação ────────────────────────────────────────────
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
-  // Validação de campos obrigatórios.
   const validate = () => {
     const e = {}
     if (!form.nome.trim()) e.nome = 'Informe o nome do pet.'
@@ -38,8 +44,10 @@ export default function PetForm({ initialData, onSubmit, onCancel }) {
     onSubmit({ ...form, idade: Number(form.idade) })
   }
 
+  // ── 4. Renderização do Formulário ──────────────────────────────────────
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Linha 1: Nome */}
       <Field label="Nome *" error={errors.nome}>
         <TextInput
           value={form.nome}
@@ -49,6 +57,7 @@ export default function PetForm({ initialData, onSubmit, onCancel }) {
         />
       </Field>
 
+      {/* Linha 2: Espécie e Porte (Lado a lado) */}
       <div className="grid grid-cols-2 gap-4">
         <Field label="Espécie">
           <Select value={form.especie} onChange={set('especie')}>
@@ -66,6 +75,7 @@ export default function PetForm({ initialData, onSubmit, onCancel }) {
         </Field>
       </div>
 
+      {/* Linha 3: Raça */}
       <Field label="Raça *" error={errors.raca}>
         <TextInput
           value={form.raca}
@@ -75,6 +85,7 @@ export default function PetForm({ initialData, onSubmit, onCancel }) {
         />
       </Field>
 
+      {/* Linha 4: Idade e Cor (Lado a lado) */}
       <div className="grid grid-cols-2 gap-4">
         <Field label="Idade (anos) *" error={errors.idade}>
           <TextInput
@@ -91,6 +102,7 @@ export default function PetForm({ initialData, onSubmit, onCancel }) {
         </Field>
       </div>
 
+      {/* Ações: Cancelar e Salvar */}
       <div className="flex justify-end gap-3 pt-2">
         <button type="button" onClick={onCancel} className="btn-ghost">
           Cancelar

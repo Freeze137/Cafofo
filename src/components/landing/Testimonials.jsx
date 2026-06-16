@@ -1,7 +1,15 @@
 import { motion } from 'framer-motion'
 import { Star, Quote } from 'lucide-react'
 
-// Seção de depoimentos de clientes.
+// ─────────────────────────────────────────────────────────────────────────
+// Seção de Depoimentos (Prova Social)
+//
+// Exibe avaliações de clientes reais para gerar confiança nos visitantes.
+// Utiliza o Framer Motion para animar a entrada dos cards lado a lado.
+// ─────────────────────────────────────────────────────────────────────────
+
+// ── 1. Dados Estáticos ───────────────────────────────────────────────────
+// Lista de avaliações definida fora do componente para não ser recriada a cada renderização.
 const TESTIMONIALS = [
   {
     name: 'Mariana Silva',
@@ -21,9 +29,11 @@ const TESTIMONIALS = [
 ]
 
 export default function Testimonials() {
+  // ── 2. Renderização da Seção ───────────────────────────────────────────
   return (
     <section id="depoimentos" className="bg-brand-50/60 py-20">
       <div className="mx-auto max-w-6xl px-4">
+        {/* Cabeçalho da Seção */}
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-extrabold text-slate-900 sm:text-4xl">
             Quem confia, <span className="text-brand-500">recomenda</span>
@@ -33,6 +43,7 @@ export default function Testimonials() {
           </p>
         </div>
 
+        {/* Grid Animado de Cards */}
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {TESTIMONIALS.map((t, i) => (
             <motion.figure

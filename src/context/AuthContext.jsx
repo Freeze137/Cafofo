@@ -3,17 +3,19 @@ import { USE_FIREBASE, STORAGE_PREFIX } from '../services/config'
 import { auth, googleProvider } from '../firebase/firebase'
 
 // ─────────────────────────────────────────────────────────────────────────
-// AuthContext (Passo 3 da entrega) — Gerenciamento de estado da sessão
+// AuthContext — Gerenciamento de Estado da Sessão
 //
 // Fornece login, cadastro, logout e o usuário atual para toda a aplicação
-// via Context API. Suporta dois modos:
-//   • LOCAL (padrão): autenticação simulada persistida em localStorage,
-//     permitindo manter a sessão e bloquear rotas sem nenhum backend.
-//   • FIREBASE: usa Firebase Authentication (Email/Senha + Google) quando
-//     há credenciais configuradas em .env.
+// via Context API. 
+//
+// ⚠️ Suporta dois modos de operação (definidos em src/services/config.js):
+// • LOCAL (padrão): simula backend com localStorage.
+// • FIREBASE: usa Firebase Auth real quando configurado no .env.
 // ─────────────────────────────────────────────────────────────────────────
 
 const AuthContext = createContext(null)
+
+// ── 1. Configurações e Mock ──────────────────────────────────────────────
 const SESSION_KEY = `${STORAGE_PREFIX}:session`
 const USERS_KEY = `${STORAGE_PREFIX}:users`
 
@@ -26,7 +28,8 @@ const DEMO_USER = {
   photoURL: null,
 }
 
-/* ----------------------- Helpers do modo LOCAL ----------------------- */
+// ── 2. Helpers (Modo Local) ──────────────────────────────────────────────
+// Funções auxiliares para ler e escrever a lista de usuários no localStorage.
 function readUsers() {
   try {
     const raw = localStorage.getItem(USERS_KEY)
@@ -43,11 +46,15 @@ function writeUsers(users) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users))
 }
 
+// ── 3. Provider de Autenticação ──────────────────────────────────────────
 export function AuthProvider({ children }) {
+  // 3.1 Estados
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Restaura a sessão ao carregar o app (mantém o usuário logado).
+  // 3.2 Efeito de Inicialização (Restauração de Sessão)
+  // Executado apenas uma vez quando o app abre. Verifica se já existe
+  // uma sessão salva no Firebase ou no localStorage.
   useEffect(() => {
     if (USE_FIREBASE) {
       // No modo Firebase, escuta as mudanças de autenticação.
@@ -80,6 +87,7 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }, [])
 
+  // 3.3 Handlers de Autenticação
   /** Persiste a sessão local. */
   const persistSession = (u) => {
     setUser(u)
@@ -158,9 +166,11 @@ export function AuthProvider({ children }) {
     [user, loading],
   )
 
+  // 3.4 Renderização do Provider
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+// ── 4. Hook Customizado ──────────────────────────────────────────────────
 /** Hook de acesso ao contexto de autenticação. */
 export function useAuth() {
   const ctx = useContext(AuthContext)

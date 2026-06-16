@@ -22,7 +22,7 @@ const NAV = [
   { to: '/app/relatorio', label: 'Relatório', icon: BarChart3 },
 ]
 
-// Layout com sidebar para o dashboard do cliente.
+// Layout com sidebar para o dashboard do cliente. ONDE O CLIENTE VERÁ SEUS PETS, AGENDAMENTOS, PRODUTOS E RELATÓRIOS.
 export default function DashboardLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
