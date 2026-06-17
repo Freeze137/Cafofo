@@ -1,34 +1,43 @@
 import { motion } from 'framer-motion'
-import { Search, ClipboardList, HeartHandshake, Home } from 'lucide-react'
 
 // ─────────────────────────────────────────────────────────────────────────
 // Seção "Como adotar"
 //
-// Explica em quatro passos o processo de adoção de um animal do abrigo,
-// usando os cards animados do Framer Motion.
+// Quatro passos do processo de adoção, cada um em um card com IMAGEM no topo
+// + texto, animados com Framer Motion.
+//
+// `fit` controla como a imagem preenche o cabeçalho:
+//   • 'cover'   → fotos (preenchem todo o espaço)
+//   • 'contain' → ícone/logo com fundo transparente (centralizados, com folga)
+//
+// As imagens ficam em `public/img/`. Para trocar, basta substituir os arquivos.
 // ─────────────────────────────────────────────────────────────────────────
 
 // ── 1. Dados Estáticos ───────────────────────────────────────────────────
 const STEPS = [
   {
-    icon: Search,
     title: '1. Conheça os pets',
     desc: 'Veja os animais disponíveis no abrigo e encontre aquele que combina com você.',
+    img: '/img/passo-1.png',
+    fit: 'contain',
   },
   {
-    icon: ClipboardList,
     title: '2. Inicie o processo',
     desc: 'Registre seu interesse e converse com nossa equipe de voluntários.',
+    img: '/img/passo-2.jpg',
+    fit: 'cover',
   },
   {
-    icon: HeartHandshake,
     title: '3. Visita e aprovação',
     desc: 'Agende uma visita ao abrigo e finalize o processo com tranquilidade.',
+    img: '/img/passo-3.png',
+    fit: 'contain',
   },
   {
-    icon: Home,
     title: '4. Leve para casa',
     desc: 'Adoção concluída! Seu novo amigo ganha um lar cheio de amor.',
+    img: '/img/passo-4.jpg',
+    fit: 'cover',
   },
 ]
 
@@ -54,13 +63,27 @@ export default function Services() {
             viewport={{ once: true }}
             transition={{ delay: i * 0.08 }}
             whileHover={{ y: -8 }}
-            className="card group cursor-default hover:shadow-soft"
+            className="group flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition hover:shadow-soft"
           >
-            <div className="mb-5 inline-flex rounded-2xl bg-brand-100 p-4 text-brand-500 transition group-hover:bg-brand-500 group-hover:text-white">
-              <s.icon size={28} />
+            {/* Imagem do passo */}
+            <div className="flex h-44 items-center justify-center overflow-hidden bg-brand-50">
+              <img
+                src={s.img}
+                alt={s.title}
+                loading="lazy"
+                className={
+                  s.fit === 'cover'
+                    ? 'h-full w-full object-cover transition duration-500 group-hover:scale-105'
+                    : 'h-full w-full object-contain p-6 transition duration-500 group-hover:scale-105'
+                }
+              />
             </div>
-            <h3 className="text-xl font-bold text-slate-800">{s.title}</h3>
-            <p className="mt-2 text-slate-500">{s.desc}</p>
+
+            {/* Texto do passo */}
+            <div className="flex flex-1 flex-col px-5 pb-6 pt-5">
+              <h3 className="text-xl font-bold text-slate-800">{s.title}</h3>
+              <p className="mt-2 text-slate-500">{s.desc}</p>
+            </div>
           </motion.article>
         ))}
       </div>
