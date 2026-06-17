@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { HeartHandshake, Plus, Pencil, Trash2, Mail, Phone } from 'lucide-react'
+import { HeartHandshake, PawPrint, Pencil, Trash2, Mail, Phone } from 'lucide-react'
 import { listVolunteers, createVolunteer, updateVolunteer, deleteVolunteer } from '../services/volunteerService'
 import PageHeader from '../components/ui/PageHeader'
 import EmptyState from '../components/ui/EmptyState'
@@ -48,7 +48,7 @@ export default function VolunteersPage() {
         description="Equipe que ajuda a cuidar do abrigo e dos processos de adoção."
         action={
           <button onClick={() => setEditing({})} className="btn-primary">
-            <Plus size={18} /> Novo voluntário
+            <PawPrint size={18} /> Novo voluntário
           </button>
         }
       />
@@ -66,7 +66,7 @@ export default function VolunteersPage() {
           icon={HeartHandshake}
           title="Nenhum voluntário cadastrado"
           description="Cadastre a equipe que ajuda no abrigo."
-          action={<button onClick={() => setEditing({})} className="btn-primary"><Plus size={18} /> Novo voluntário</button>}
+          action={<button onClick={() => setEditing({})} className="btn-primary"><PawPrint size={18} /> Novo voluntário</button>}
         />
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

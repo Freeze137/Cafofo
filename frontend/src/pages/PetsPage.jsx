@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Dog, Plus, Pencil, Trash2 } from 'lucide-react'
+import { Dog, PawPrint, Pencil, Trash2 } from 'lucide-react'
 import { listPets, createPet, updatePet, deletePet } from '../services/petService'
 import PageHeader from '../components/ui/PageHeader'
 import EmptyState from '../components/ui/EmptyState'
@@ -55,7 +55,7 @@ export default function PetsPage() {
         description="Cadastro dos animais do abrigo disponíveis para adoção."
         action={
           <button onClick={() => setEditing({})} className="btn-primary">
-            <Plus size={18} /> Novo pet
+            <PawPrint size={18} /> Novo pet
           </button>
         }
       />
@@ -73,7 +73,7 @@ export default function PetsPage() {
           icon={Dog}
           title="Nenhum pet cadastrado"
           description="Cadastre o primeiro animal para começar a gerenciar as adoções."
-          action={<button onClick={() => setEditing({})} className="btn-primary"><Plus size={18} /> Novo pet</button>}
+          action={<button onClick={() => setEditing({})} className="btn-primary"><PawPrint size={18} /> Novo pet</button>}
         />
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

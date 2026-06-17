@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ClipboardList, Plus, Pencil, Trash2 } from 'lucide-react'
+import { ClipboardList, PawPrint, Pencil, Trash2 } from 'lucide-react'
 import { listAdoptions, createAdoption, updateAdoption, deleteAdoption } from '../services/adoptionService'
 import { listPets } from '../services/petService'
 import { listVolunteers } from '../services/volunteerService'
@@ -64,7 +64,7 @@ export default function AdoptionsPage() {
         description="Processos de adoção e vínculo entre pets e voluntários."
         action={
           <button onClick={() => setEditing({})} className="btn-primary">
-            <Plus size={18} /> Nova adoção
+            <PawPrint size={18} /> Nova adoção
           </button>
         }
       />
@@ -82,7 +82,7 @@ export default function AdoptionsPage() {
           icon={ClipboardList}
           title="Nenhuma adoção registrada"
           description="Registre o primeiro processo de adoção vinculando um pet."
-          action={<button onClick={() => setEditing({})} className="btn-primary"><Plus size={18} /> Nova adoção</button>}
+          action={<button onClick={() => setEditing({})} className="btn-primary"><PawPrint size={18} /> Nova adoção</button>}
         />
       ) : (
         <motion.div
