@@ -1,10 +1,18 @@
+import { motion } from 'framer-motion'
 import { PawPrint, Instagram, Facebook, Mail, MapPin } from 'lucide-react'
 
-// Rodapé institucional da landing page.
+// Rodapé institucional da landing page. As colunas entram em sequência ao
+// rolar até o rodapé (whileInView), mantendo o padrão animado do app.
 export default function Footer() {
   return (
     <footer id="sobre" className="border-t border-brand-100 bg-brand-900 text-brand-50">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-3">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-3"
+      >
         <div>
           <div className="flex items-center gap-2 text-xl font-extrabold">
             <span className="rounded-xl bg-brand-500 p-2 text-white">
@@ -45,7 +53,7 @@ export default function Footer() {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
       <div className="border-t border-brand-800 py-5 text-center text-sm text-brand-300">
         © {new Date().getFullYear()} CAFOFO ADOÇÃO. Todos os direitos reservados. 🐾
       </div>
