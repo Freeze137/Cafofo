@@ -1,106 +1,115 @@
-# 🐾 CAFOFOPELUDOS
+# 🐾 CAFOFO ADOÇÃO
 
-SPA moderna de **pet shop & hotelzinho** desenvolvida em **React + Vite**, com
-landing page interativa, autenticação, três CRUDs completos e um relatório com
-JOIN entre entidades.
+Sistema de **adoção de animais** dividido em duas aplicações independentes:
 
-> Projeto desenvolvido para a **Avaliação N2 — Programação Web**.
+- **`frontend/`** — SPA em **React + Vite + Tailwind** (landing page, autenticação
+  e painel de gestão).
+- **`backend/`** — **API REST em Node.js + Express** com persistência em arquivo
+  JSON, que expõe os três CRUDs do sistema.
+
+As duas partes rodam isoladamente: o frontend consome a API do backend via HTTP.
 
 ## ✨ Funcionalidades
 
-- **Landing page** responsiva e animada (Hero, Serviços, Depoimentos, CTA).
-- **Autenticação** (login, cadastro e logout) com controle de sessão e bloqueio
-  das rotas privadas — via Context API (`AuthContext`).
-- **CRUD 1 — Pets**: adicionar, listar, editar e remover os pets do tutor.
-- **CRUD 2 — Produtos**: catálogo da lojinha (tabela completa).
-- **CRUD 3 — Agendamentos**: marcar serviços relacionando pet + serviço.
-- **Relatório com JOIN**: cruzamento entre Agendamentos × Pets × Serviços × Tutor,
-  usando `map()` + `find()` com chaves estrangeiras simuladas.
+- **Landing page** responsiva e animada (Hero, Como adotar, Histórias, CTA).
+- **Autenticação** (login, cadastro e logout) com sessão e bloqueio de rotas
+  privadas — via Context API (`AuthContext`).
+- **CRUD 1 — Pets**: cadastro, edição, listagem e remoção dos animais do abrigo.
+- **CRUD 2 — Adoções**: processos de adoção, vinculando pet + voluntário (FKs).
+- **CRUD 3 — Voluntários**: equipe que ajuda no abrigo.
+- **Relatório com JOIN**: cruzamento Adoções × Pets × Voluntários, calculado no
+  backend (`GET /api/adoptions/report`).
 
 ## 🛠️ Stack
 
-| Camada            | Tecnologia                          |
-| ----------------- | ----------------------------------- |
-| Build / Dev       | Vite                                |
-| UI                | React 18 + React Router DOM v6      |
-| Estilização       | Tailwind CSS (mobile-first)         |
-| Ícones / Animação | Lucide React + Framer Motion        |
-| Estado global     | Context API                         |
-| Persistência      | localStorage (padrão) ou Firebase   |
+| Camada       | Frontend                          | Backend              |
+| ------------ | --------------------------------- | -------------------- |
+| Runtime      | Vite + React 18                   | Node.js + Express    |
+| Roteamento   | React Router DOM v6               | Express Router       |
+| Estilização  | Tailwind CSS                      | —                    |
+| UI / Animação| Lucide React + Framer Motion      | —                    |
+| Persistência | API REST (ou Firebase p/ auth)    | Arquivo JSON (`db.json`) |
 
 ## 🚀 Como executar
 
+São **dois processos** — abra dois terminais.
+
+### 1. Backend (porta 3333)
+
 ```bash
+cd backend
 npm install
 npm run dev
 ```
 
-Acesse **http://localhost:5173**.
+### 2. Frontend (porta 5173)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Acesse **http://localhost:5173**. O frontend aponta para `http://localhost:3333/api`
+por padrão (configurável em `frontend/.env` via `VITE_API_URL`).
 
 ### 🔑 Conta de demonstração
 
-O sistema já vem com dados de exemplo (pets, produtos e agendamentos):
+O login usa um backend local (localStorage) e já vem com um usuário de teste:
 
 - **E-mail:** `demo@cafofopeludos.com`
 - **Senha:** `123456`
 
-Ou crie uma conta nova na tela de cadastro.
+Os dados das três entidades (pets, adoções, voluntários) são semeados pelo
+**backend** na primeira execução.
 
 ## 🗂️ Estrutura de pastas
 
 ```
-cafofopeludos/
-├── index.html
-├── package.json
-├── vite.config.js
-├── tailwind.config.js
-├── postcss.config.js
-├── .env.example
-├── public/
-│   └── paw.svg
-└── src/
-    ├── main.jsx                 # Ponto de entrada (Router + AuthProvider)
-    ├── App.jsx                  # Arquivo central de ROTAS
-    ├── index.css                # Tailwind + estilos globais
-    ├── firebase/
-    │   └── firebase.js          # Configuração do Firebase (opcional)
-    ├── context/
-    │   └── AuthContext.jsx      # Estado de autenticação (Context API)
-    ├── services/                # Camada de acesso a dados (isolada)
-    │   ├── config.js            # Seleciona o backend (local x firebase)
-    │   ├── localDriver.js       # CRUD genérico em localStorage
-    │   ├── petService.js        # CRUD 1
-    │   ├── productService.js    # CRUD 2
-    │   ├── appointmentService.js# CRUD 3
-    │   └── serviceCatalog.js    # Catálogo de serviços (JOIN)
-    ├── data/
-    │   └── seed.js              # Dados iniciais de demonstração
-    ├── components/
-    │   ├── ProtectedRoute.jsx   # Bloqueio de rotas sem login
-    │   ├── layout/              # Navbar, Footer, DashboardLayout
-    │   ├── ui/                  # Modal, Field, ConfirmDialog, etc.
-    │   ├── landing/             # Hero, Services, Testimonials
-    │   ├── pets/                # PetCard, PetForm
-    │   ├── appointments/        # AppointmentForm
-    │   └── products/            # ProductForm
-    └── pages/                   # Landing, Login, Register, Dashboard, CRUDs, Relatório
+Cafofo/
+├── README.md
+├── frontend/                     # Aplicação React (interface)
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   └── src/
+│       ├── App.jsx               # Rotas
+│       ├── context/AuthContext.jsx
+│       ├── services/             # Cliente da API REST
+│       │   ├── api.js            # fetch + fábrica de CRUD
+│       │   ├── petService.js        # CRUD 1
+│       │   ├── adoptionService.js   # CRUD 2 (+ relatório/JOIN)
+│       │   └── volunteerService.js  # CRUD 3
+│       ├── components/
+│       │   ├── pets/ adoptions/ volunteers/   # formulários dos CRUDs
+│       │   ├── layout/ ui/ landing/
+│       └── pages/                # Landing, Login, Dashboard, CRUDs, Relatório
+└── backend/                      # API REST (Express)
+    ├── package.json
+    └── src/
+        ├── server.js             # Inicialização + montagem das rotas
+        ├── db.js                 # CRUD genérico sobre db.json
+        ├── data/seed.js          # Dados iniciais
+        └── routes/
+            ├── crudRouter.js     # Fábrica de rotas REST genéricas
+            ├── pets.js           # CRUD 1
+            ├── adoptions.js      # CRUD 2 (+ /report)
+            └── volunteers.js     # CRUD 3
 ```
 
-## 🔥 Ativando o Firebase (opcional)
+## 🔌 Endpoints da API
 
-O app roda **sem nenhuma configuração** usando `localStorage`. Para usar o
-backend real do Firebase (Auth + Firestore):
+| Método | Rota                    | Descrição                       |
+| ------ | ----------------------- | ------------------------------- |
+| CRUD   | `/api/pets`             | Pets                            |
+| CRUD   | `/api/adoptions`        | Adoções                         |
+| CRUD   | `/api/volunteers`       | Voluntários                     |
+| GET    | `/api/adoptions/report` | JOIN adoções × pets × volunt.   |
+| GET    | `/api/health`           | Healthcheck                     |
 
-1. Crie um projeto em [console.firebase.google.com](https://console.firebase.google.com).
-2. Copie `.env.example` para `.env` e preencha as chaves `VITE_FIREBASE_*`.
-3. A flag `USE_FIREBASE` (em `src/services/config.js`) é ativada automaticamente
-   quando há credenciais, e o `AuthContext` passa a usar Email/Senha + Google.
+## 🔥 Firebase (opcional, só para autenticação)
 
-## 📜 Scripts
-
-| Comando           | Descrição                          |
-| ----------------- | ---------------------------------- |
-| `npm run dev`     | Servidor de desenvolvimento (Vite) |
-| `npm run build`   | Build de produção                  |
-| `npm run preview` | Pré-visualiza o build              |
-| `npm run lint`    | Análise estática com ESLint        |
+O app roda sem configuração usando `localStorage` para a sessão. Para usar o
+Firebase Auth, copie `frontend/.env.example` para `frontend/.env` e preencha as
+chaves `VITE_FIREBASE_*` (ver `frontend/src/firebase/firebase.js`).
