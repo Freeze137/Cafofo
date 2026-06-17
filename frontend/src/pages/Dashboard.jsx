@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Dog, ClipboardList, HeartHandshake, ArrowRight, PawPrint } from 'lucide-react'
+import { Dog, ClipboardList, HeartHandshake, ArrowRight } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { listPets } from '../services/petService'
 import { listAdoptions } from '../services/adoptionService'
@@ -71,21 +71,29 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="mt-6 flex flex-col items-center justify-between gap-6 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-500 to-brand-700 p-8 text-white sm:flex-row"
+        className="relative mt-6 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-500 to-brand-700 p-8 text-white"
       >
-        <div>
-          <h2 className="text-2xl font-extrabold">Cada adoção transforma uma vida 🐶🐱</h2>
+        {/* Foto de fundo (pet) + overlay laranja para manter o texto legível. */}
+        <img
+          src="/img/dashboard-banner.jpg"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-600/80 to-brand-700/85" />
+
+        <div className="relative z-10 [text-shadow:_0_1px_8px_rgb(124_45_18_/_55%)]">
+          <h2 className="text-2xl font-extrabold drop-shadow-sm">Cada adoção transforma uma vida 🐶🐱</h2>
           <p className="mt-2 max-w-md text-brand-50">
             Cadastre um novo animal disponível e ajude-o a encontrar um lar.
           </p>
           <Link
             to="/app/pets"
-            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 font-bold text-brand-600 transition hover:-translate-y-0.5"
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 font-bold text-brand-600 shadow-lg transition hover:-translate-y-0.5 [text-shadow:none]"
           >
             Cadastrar pet <ArrowRight size={18} />
           </Link>
         </div>
-        <PawPrint size={120} className="hidden animate-float text-white/30 sm:block" />
       </motion.div>
     </div>
   )
