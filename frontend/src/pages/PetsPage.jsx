@@ -87,9 +87,11 @@ export default function PetsPage() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="rounded-2xl bg-brand-100 p-3 text-brand-500">
-                    <Dog size={24} />
-                  </div>
+                  {/* Foto se existir, senão ícone Dog */}
+                  {pet.foto
+                    ? <img src={pet.foto} alt={pet.nome} className="w-14 h-14 rounded-2xl object-cover" />
+                    : <div className="rounded-2xl bg-brand-100 p-3 text-brand-500"><Dog size={24} /></div>
+                  }
                   <div>
                     <h3 className="text-lg font-bold text-slate-800">{pet.nome}</h3>
                     <p className="text-sm text-slate-500">{pet.especie} · {pet.raca || 'SRD'}</p>

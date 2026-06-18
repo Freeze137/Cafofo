@@ -6,7 +6,6 @@ import { crudRouter } from './crudRouter.js'
 
 const STATUS = ['Disponível', 'Em processo', 'Adotado']
 
-/** Valida e normaliza o corpo de um pet. */
 function validatePet(body = {}, { partial = false } = {}) {
   const value = {}
 
@@ -20,6 +19,8 @@ function validatePet(body = {}, { partial = false } = {}) {
   for (const field of ['raca', 'porte', 'sexo', 'cor', 'descricao']) {
     if (body[field] !== undefined) value[field] = String(body[field]).trim()
   }
+
+  if (body.foto !== undefined) value.foto = body.foto  // base64 ou null
 
   if (body.idade !== undefined) value.idade = Number(body.idade) || 0
 
