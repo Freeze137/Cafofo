@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 
-// Páginas públicas
+// Importa as telas
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -48,7 +48,9 @@ export default function App() {
           </ProtectedRoute>
         }
       >
+        {/* O 'index' é a tela padrão quando o usuário entra em /app */}
         <Route index element={<Dashboard />} />
+        {/* Sub-rotas onde os CRUDs acontecem */}
         <Route path="pets" element={<PetsPage />} />
         <Route path="adocoes" element={<AdoptionsPage />} />
         <Route path="voluntarios" element={<VolunteersPage />} />

@@ -2,40 +2,42 @@ import { API_URL } from './config'
 
 // ─────────────────────────────────────────────────────────────────────────
 // Cliente HTTP da API REST de adoção
-//
-// Camada fina sobre o fetch que centraliza a URL base, o parsing de JSON e
-// o tratamento de erros. Os serviços por entidade (petService, etc.) usam
-// estas funções e nunca falam com o fetch diretamente.
 // ─────────────────────────────────────────────────────────────────────────
 
+//Faz a ponte entre o Frontend e o Backend usando 'fetch'
 async function request(path, options = {}) {
   const res = await fetch(`${API_URL}${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   })
 
-  // 204 No Content (ex.: DELETE) não tem corpo para parsear.
+  //(ex: excluiu com sucesso), retorna nulo pois não tem texto para ler
   if (res.status === 204) return null
 
+  // Tenta ler a resposta do servidor
   const data = await res.json().catch(() => null)
 
+  //lança esse erro para o React mostrar na tela
   if (!res.ok) {
     throw new Error(data?.error || 'Erro ao comunicar com o servidor.')
   }
   return data
 }
 
+//atalhos fáceis para não digitar asconfigurações do 'fetch' toda hora
 export const api = {
   get: (path) => request(path),
-  post: (path, body) => request(path, { method: 'POST', body: JSON.stringify(body) }),
+  post: (path, body) => request(path, { method: 'POST', body: JSON.stringify(body) }), // trasforma em json
   put: (path, body) => request(path, { method: 'PUT', body: JSON.stringify(body) }),
   del: (path) => request(path, { method: 'DELETE' }),
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Fábrica de serviço CRUD: gera as quatro operações para uma coleção REST,
-// evitando repetir o mesmo boilerplate em cada entidade.
+// Fábrica de serviço CRUD
 // ─────────────────────────────────────────────────────────────────────────
+
+// Assim como fizemos no Backend, essa cria as 5 funções
+// (listar, buscar, criar, atualizar e deletar) para qualquer entidade
 export function crudService(resource) {
   return {
     list: () => api.get(`/${resource}`),

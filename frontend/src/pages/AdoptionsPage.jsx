@@ -16,6 +16,7 @@ import AdoptionForm from '../components/adoptions/AdoptionForm'
 // junto. Criação/edição via Modal; exclusão com confirmação.
 // ─────────────────────────────────────────────────────────────────────────
 
+//cores
 const STATUS_STYLE = {
   'Em análise': 'bg-amber-100 text-amber-700',
   Aprovada: 'bg-sky-100 text-sky-700',
@@ -24,6 +25,7 @@ const STATUS_STYLE = {
 }
 
 export default function AdoptionsPage() {
+  //Variáveis de Estado
   const [adoptions, setAdoptions] = useState([])
   const [pets, setPets] = useState([])
   const [volunteers, setVolunteers] = useState([])
@@ -32,6 +34,7 @@ export default function AdoptionsPage() {
   const [editing, setEditing] = useState(null)
   const [removing, setRemoving] = useState(null)
 
+  // Carrega tudo do Backend
   const load = () => {
     setLoading(true)
     Promise.all([listAdoptions(), listPets(), listVolunteers()])
@@ -45,6 +48,7 @@ export default function AdoptionsPage() {
   const petName = (id) => pets.find((p) => p.id === id)?.nome ?? 'Pet removido'
   const volunteerName = (id) => volunteers.find((v) => v.id === id)?.nome ?? '—'
 
+  //Salvar (Criar ou Atualizar)
   const handleSubmit = async (data) => {
     if (editing?.id) await updateAdoption(editing.id, data)
     else await createAdoption(data)
@@ -52,11 +56,13 @@ export default function AdoptionsPage() {
     load()
   }
 
+  //Excluir
   const handleDelete = async () => {
     await deleteAdoption(removing.id)
     load()
   }
 
+  //Visual
   return (
     <div>
       <PageHeader
@@ -154,6 +160,7 @@ export default function AdoptionsPage() {
   )
 }
 
+// Função para consertar o formato da data
 function formatDate(iso) {
   if (!iso) return '—'
   const [y, m, d] = iso.split('-')

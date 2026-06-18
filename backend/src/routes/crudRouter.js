@@ -15,24 +15,28 @@ import * as db from '../db.js'
 //   DELETE /:id     → remove um registro
 // ─────────────────────────────────────────────────────────────────────────
 export function crudRouter(collection, validate = (data) => ({ value: data })) {
-  const router = Router()
+  const router = Router() // Cria um novo roteador isolado
 
+  //Retorna todos os itens da coleção
   router.get('/', (_req, res) => {
     res.json(db.list(collection))
   })
 
+  //Retorna apenas um ID específico
   router.get('/:id', (req, res) => {
     const item = db.getById(collection, req.params.id)
     if (!item) return res.status(404).json({ error: 'Registro não encontrado.' })
     res.json(item)
   })
 
+  //Adiciona um novo registro no banco de dados
   router.post('/', (req, res) => {
     const { value, error } = validate(req.body)
     if (error) return res.status(400).json({ error })
     res.status(201).json(db.create(collection, value))
   })
 
+  //Atualiza um registro existente
   router.put('/:id', (req, res) => {
     const { value, error } = validate(req.body, { partial: true })
     if (error) return res.status(400).json({ error })
@@ -41,6 +45,7 @@ export function crudRouter(collection, validate = (data) => ({ value: data })) {
     res.json(updated)
   })
 
+  //Remove um registro do banco pelo ID
   router.delete('/:id', (req, res) => {
     const ok = db.remove(collection, req.params.id)
     if (!ok) return res.status(404).json({ error: 'Registro não encontrado.' })

@@ -4,32 +4,37 @@ import * as db from '../db.js'
 // ─────────────────────────────────────────────────────────────────────────
 // CRUD 2 — Adoções (processos que vinculam um pet a um voluntário)
 //
-// Chaves estrangeiras: petId (animal adotado) e volunteerId (responsável).
+// Chaves estrangeiras: petId (animal adotado) e volunteerId (responsável)
 // Ao mudar o status da adoção, o status do pet vinculado é atualizado para
-// manter a integridade entre as entidades (ex.: "Concluída" → pet "Adotado").
+// manter a integridade entre as entidades (ex.: "Concluída" → pet "Adotado")
 // ─────────────────────────────────────────────────────────────────────────
 
+// Define onde vamos salvar e os status que uma adoção pode ter
 const COLLECTION = 'adoptions'
 const STATUS = ['Em análise', 'Aprovada', 'Concluída', 'Cancelada']
 
-// Mapeia o status da adoção para o status correspondente do pet vinculado.
+// Mapeia o status da adoção para o status correspondente do pet vinculado
 const PET_STATUS_BY_ADOPTION = {
   'Em análise': 'Em processo',
   Aprovada: 'Em processo',
   Concluída: 'Adotado',
   Cancelada: 'Disponível',
 }
-
+//Verifica se os dados enviados pelo usuário estão corretos
+// "partial = true" serve para atualizações parciais
 function validateAdoption(body = {}, { partial = false } = {}) {
   const value = {}
 
+// Verifica se o pet foi existe
   if (body.petId !== undefined) value.petId = String(body.petId).trim()
   else if (!partial) return { error: 'Selecione o pet a ser adotado.' }
   if (!partial && !value.petId) return { error: 'Selecione o pet a ser adotado.' }
+  // Confirma no banco de dados o ID do pet
   if (value.petId && !db.getById('pets', value.petId)) {
     return { error: 'Pet informado não existe.' }
   }
 
+  // Confirma no banco de dados o ID do voluntário
   if (body.volunteerId !== undefined) {
     value.volunteerId = String(body.volunteerId).trim()
     if (value.volunteerId && !db.getById('volunteers', value.volunteerId)) {
@@ -37,10 +42,13 @@ function validateAdoption(body = {}, { partial = false } = {}) {
     }
   }
 
+  // tira espaços vazios das pontas
   for (const field of ['adotante', 'contato', 'data', 'observacoes']) {
     if (body[field] !== undefined) value[field] = String(body[field]).trim()
   }
 
+  // Valida se o status está na lista de permitidos 
+  // Se for uma adoção nova fica 'Em análise' por padrão.
   if (body.status !== undefined) {
     if (!STATUS.includes(body.status)) return { error: 'Status inválido.' }
     value.status = body.status
@@ -51,7 +59,8 @@ function validateAdoption(body = {}, { partial = false } = {}) {
   return { value }
 }
 
-/** Propaga o status da adoção para o pet vinculado. */
+//Propaga o status da adoção para o pet vinculado
+// Chama o banco de dados para alterar o status do pet
 function syncPetStatus(adoption) {
   const petStatus = adoption?.petId && PET_STATUS_BY_ADOPTION[adoption.status]
   if (petStatus) db.update('pets', adoption.petId, { status: petStatus })
@@ -59,8 +68,7 @@ function syncPetStatus(adoption) {
 
 const router = Router()
 
-// JOIN feito no servidor: adoções "achatadas" com dados do pet e do voluntário.
-// Alimenta o relatório do frontend (cruzamento das três entidades).
+//pega dados de Adoções, Pets e Voluntários, cruza os dados e devolve tudo formatado para a tela de relatório
 router.get('/report', (_req, res) => {
   const pets = db.list('pets')
   const volunteers = db.list('volunteers')
@@ -77,17 +85,20 @@ router.get('/report', (_req, res) => {
       status: a.status,
     }
   })
-  res.json(rows)
+  res.json(rows) // Devolve a lista cruzada
 })
 
+//Rota para listar todas as adoções sem cruzar dados
 router.get('/', (_req, res) => res.json(db.list(COLLECTION)))
 
+//Rota de busca para adoção específica usando o ID
 router.get('/:id', (req, res) => {
   const item = db.getById(COLLECTION, req.params.id)
   if (!item) return res.status(404).json({ error: 'Registro não encontrado.' })
   res.json(item)
 })
 
+//Rota para criar uma nova adoção
 router.post('/', (req, res) => {
   const { value, error } = validateAdoption(req.body)
   if (error) return res.status(400).json({ error })
@@ -96,8 +107,9 @@ router.post('/', (req, res) => {
   res.status(201).json(created)
 })
 
+//Rota para atualizar uma adoção
 router.put('/:id', (req, res) => {
-  const { value, error } = validateAdoption(req.body, { partial: true })
+  const { value, error } = validateAdoption(req.body, { partial: true }) // Permite atualizar só parte dos dados
   if (error) return res.status(400).json({ error })
   const updated = db.update(COLLECTION, req.params.id, value)
   if (!updated) return res.status(404).json({ error: 'Registro não encontrado.' })
@@ -105,6 +117,7 @@ router.put('/:id', (req, res) => {
   res.json(updated)
 })
 
+//Rota para deletar uma adoção
 router.delete('/:id', (req, res) => {
   const ok = db.remove(COLLECTION, req.params.id)
   if (!ok) return res.status(404).json({ error: 'Registro não encontrado.' })

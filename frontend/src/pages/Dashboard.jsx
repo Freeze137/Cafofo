@@ -10,11 +10,9 @@ import PageHeader from '../components/ui/PageHeader'
 
 // ─────────────────────────────────────────────────────────────────────────
 // Visão Geral (Dashboard)
-//
-// Página inicial após o login. Resume o abrigo com indicadores (KPIs) das
-// três entidades e atalhos para os respectivos CRUDs.
 // ─────────────────────────────────────────────────────────────────────────
 export default function Dashboard() {
+  // Pega os dados do usuário logado
   const { user } = useAuth()
   const [stats, setStats] = useState({ pets: 0, adoptions: 0, volunteers: 0 })
 
@@ -30,6 +28,7 @@ export default function Dashboard() {
     })
   }, [])
 
+  // Configura os textos, cores e ícones
   const cards = [
     { to: '/app/pets', label: 'Pets', value: stats.pets, icon: Dog, color: 'from-brand-400 to-brand-600' },
     { to: '/app/adocoes', label: 'Adoções', value: stats.adoptions, icon: ClipboardList, color: 'from-sky-400 to-sky-600' },
