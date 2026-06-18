@@ -1,0 +1,11 @@
+# Dependências
+node_modules
+
+# Banco de dados local (gerado em runtime a partir do seed)
+db.json
+
+# Logs
+*.log
+
+# Variáveis de ambiente
+.env

@@ -1,0 +1,17 @@
+{
+  "name": "cafofo-adocao-backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "CAFOFO ADOÇÃO — API REST (Express) para o sistema de adoção de animais.",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.22.5"
+  }
+}
