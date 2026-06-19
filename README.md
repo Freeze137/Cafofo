@@ -28,7 +28,7 @@ As duas partes rodam isoladamente: o frontend consome a API do backend via HTTP.
 | Roteamento   | React Router DOM v6               | Express Router       |
 | Estilização  | Tailwind CSS                      | —                    |
 | UI / Animação| Lucide React + Framer Motion      | —                    |
-| Persistência | API REST (ou Firebase p/ auth)    | Arquivo JSON (`db.json`) |
+| Persistência | localStorage (sessão de login)    | Arquivo JSON (`db.json`) |
 
 ## 🚀 Como executar
 
@@ -51,7 +51,7 @@ npm run dev
 ```
 
 Acesse **http://localhost:5173**. O frontend aponta para `http://localhost:3333/api`
-por padrão (configurável em `frontend/.env` via `VITE_API_URL`).
+por padrão (sobrescreva com a variável de ambiente `VITE_API_URL`, se precisar).
 
 ### 🔑 Conta de demonstração
 
@@ -108,8 +108,10 @@ Cafofo/
 | GET    | `/api/adoptions/report` | JOIN adoções × pets × volunt.   |
 | GET    | `/api/health`           | Healthcheck                     |
 
-## 🔥 Firebase (opcional, só para autenticação)
+## 💾 Persistência
 
-O app roda sem configuração usando `localStorage` para a sessão. Para usar o
-Firebase Auth, copie `frontend/.env.example` para `frontend/.env` e preencha as
-chaves `VITE_FIREBASE_*` (ver `frontend/src/firebase/firebase.js`).
+Sem servidor de banco — roda direto após `npm install`:
+
+- **Dados** (pets, adoções, voluntários): gravados pelo backend em
+  `backend/src/data/db.json`, gerado a partir do seed na primeira execução.
+- **Sessão de login**: salva no `localStorage` do navegador (Context API).
