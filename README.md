@@ -9,6 +9,11 @@ Sistema de **adoção de animais** dividido em duas aplicações independentes:
 
 As duas partes rodam isoladamente: o frontend consome a API do backend via HTTP.
 
+> **Onde os dados ficam?** O backend **Express** continua sendo a API do sistema —
+> ele grava tudo num **arquivo JSON** (`backend/src/data/db.json`), sem servidor de
+> banco. Já o `localStorage` (no navegador) guarda **apenas a sessão de login**.
+> Resumo: dados dos CRUDs → arquivo JSON via Express; login → localStorage.
+
 ## ✨ Funcionalidades
 
 - **Landing page** responsiva e animada (Hero, Como adotar, Histórias, CTA).
