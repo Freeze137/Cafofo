@@ -37,17 +37,9 @@ As duas partes rodam isoladamente: o frontend consome a API do backend via HTTP.
 
 ## 🚀 Como executar
 
-São **dois processos** — abra dois terminais.
+São **UM processo** — abra um terminal.
 
-### 1. Backend (porta 3333)
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-### 2. Frontend (porta 5173)
+### Frontend (porta 5173)
 
 ```bash
 cd frontend
