@@ -1,16 +1,11 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { USE_FIREBASE, STORAGE_PREFIX } from '../services/config'
-import { auth, googleProvider } from '../firebase/firebase'
+import { STORAGE_PREFIX } from '../services/config'
 
 // ─────────────────────────────────────────────────────────────────────────
 // AuthContext — Gerenciamento de Estado da Sessão
 //
 // Fornece login, cadastro, logout e o usuário atual para toda a aplicação
-// via Context API. 
-//
-// ⚠️ Suporta dois modos de operação (definidos em src/services/config.js):
-// • LOCAL (padrão): simula backend com localStorage.
-// • FIREBASE: usa Firebase Auth real quando configurado no .env.
+// via Context API. A sessão é persistida no localStorage.
 // ─────────────────────────────────────────────────────────────────────────
 
 const AuthContext = createContext(null)
@@ -53,31 +48,9 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   // 3.2 Efeito de Inicialização (Restauração de Sessão)
-  // Executado apenas uma vez quando o app abre. Verifica se já existe
-  // uma sessão salva no Firebase ou no localStorage.
+  // Executado apenas uma vez quando o app abre. Lê a sessão salva
+  // no localStorage, se houver.
   useEffect(() => {
-    if (USE_FIREBASE) {
-      // No modo Firebase, escuta as mudanças de autenticação.
-      import('firebase/auth').then(({ onAuthStateChanged }) => {
-        const unsub = onAuthStateChanged(auth, (fbUser) => {
-          setUser(
-            fbUser
-              ? {
-                  id: fbUser.uid,
-                  nome: fbUser.displayName || fbUser.email,
-                  email: fbUser.email,
-                  photoURL: fbUser.photoURL,
-                }
-              : null,
-          )
-          setLoading(false)
-        })
-        return unsub
-      })
-      return
-    }
-
-    // Modo local: lê a sessão salva.
     try {
       const saved = localStorage.getItem(SESSION_KEY)
       if (saved) setUser(JSON.parse(saved))
@@ -96,11 +69,6 @@ export function AuthProvider({ children }) {
 
   /** Login com e-mail e senha. */
   const login = async (email, senha) => {
-    if (USE_FIREBASE) {
-      const { signInWithEmailAndPassword } = await import('firebase/auth')
-      const cred = await signInWithEmailAndPassword(auth, email, senha)
-      return cred.user
-    }
     const found = readUsers().find(
       (u) => u.email === email.trim().toLowerCase() && u.senha === senha,
     )
@@ -112,14 +80,6 @@ export function AuthProvider({ children }) {
 
   /** Cadastro de novo usuário. */
   const register = async (nome, email, senha) => {
-    if (USE_FIREBASE) {
-      const { createUserWithEmailAndPassword, updateProfile } = await import(
-        'firebase/auth'
-      )
-      const cred = await createUserWithEmailAndPassword(auth, email, senha)
-      await updateProfile(cred.user, { displayName: nome })
-      return cred.user
-    }
     const users = readUsers()
     const normalized = email.trim().toLowerCase()
     if (users.some((u) => u.email === normalized))
@@ -131,31 +91,20 @@ export function AuthProvider({ children }) {
     return safe
   }
 
-  /** Login com Google (apenas modo Firebase). */
+  /** Login com Google (demonstração no modo local). */
   const loginWithGoogle = async () => {
-    if (!USE_FIREBASE) {
-      // Fallback de demonstração no modo local.
-      persistSession({
-        id: 'user-google-demo',
-        nome: 'Usuário Google',
-        email: 'google@cafofopeludos.com',
-        photoURL: null,
-      })
-      return
-    }
-    const { signInWithPopup } = await import('firebase/auth')
-    await signInWithPopup(auth, googleProvider)
+    persistSession({
+      id: 'user-google-demo',
+      nome: 'Usuário Google',
+      email: 'google@cafofopeludos.com',
+      photoURL: null,
+    })
   }
 
   /** Encerra a sessão. */
   const logout = async () => {
-    if (USE_FIREBASE) {
-      const { signOut } = await import('firebase/auth')
-      await signOut(auth)
-    } else {
-      localStorage.removeItem(SESSION_KEY)
-      setUser(null)
-    }
+    localStorage.removeItem(SESSION_KEY)
+    setUser(null)
   }
 
   // As funções (login/register/etc.) são estáveis durante o ciclo de vida do
