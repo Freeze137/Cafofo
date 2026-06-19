@@ -3,6 +3,9 @@ node_modules
 dist
 dist-ssr
 
+# Banco local (gerado a partir do seed na primeira execução)
+backend/src/data/db.json
+
 # Logs
 *.log
 npm-debug.log*

@@ -46,7 +46,7 @@ export const SEED = {
   // ── Adoções (CRUD 2) ───────────────────────────────────────────────────
   // Processos de adoção. Chaves estrangeiras: petId, volunteerId.
   // `adotante` guarda os dados de quem está adotando o animal.
-  doptions: [
+  adoptions: [
     { id: 'adoption-1', petId: 'pet-3', volunteerId: 'volunteer-2', adotante: 'Carlos Mendes', contato: '(11) 96666-3030', data: '2026-06-10', status: 'Em análise', observacoes: 'Visita ao abrigo agendada.', createdAt: now() },
     { id: 'adoption-2', petId: 'pet-4', volunteerId: 'volunteer-1', adotante: 'Fernanda Lopes', contato: '(11) 95555-4040', data: '2026-05-28', status: 'Concluída', observacoes: 'Adoção finalizada com sucesso.', createdAt: now() },
   ],
