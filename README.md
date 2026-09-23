@@ -1,114 +1,132 @@
-# 🐾 CAFOFO ADOÇÃO
+# 🐾 Cafofo Adoção
 
-Sistema de **adoção de animais** dividido em duas aplicações independentes:
+Sistema web de **adoção de animais** para abrigos: cadastro de pets, controle dos
+processos de adoção, gestão de voluntários e relatório consolidado.
 
-- **`frontend/`** — SPA em **React + Vite + Tailwind** (landing page, autenticação
-  e painel de gestão).
-- **`backend/`** — **API REST em Node.js + Express** com persistência em arquivo
-  JSON, que expõe os três CRUDs do sistema.
+> Projeto acadêmico — Engenharia de Software, Universidade Católica de Brasília (UCB).
+> Objeto de estudo da disciplina **Qualidade de Software** (Projeto Integrador 2026).
 
-As duas partes rodam isoladamente: o frontend consome a API do backend via HTTP.
+## 👥 Equipe
 
-> **Onde os dados ficam?** O backend **Express** continua sendo a API do sistema —
-> ele grava tudo num **arquivo JSON** (`backend/src/data/db.json`), sem servidor de
-> banco. Já o `localStorage` (no navegador) guarda **apenas a sessão de login**.
-> Resumo: dados dos CRUDs → arquivo JSON via Express; login → localStorage.
+| Integrante | Papel no projeto de Qualidade |
+| --- | --- |
+| Pedro Alves de Souza | Caracterização e diagnóstico conceitual |
+| Rafael Dias Leitão | Critérios observáveis e métricas |
+| Rafael Souza Costa | Análise automatizada e controle de versões (mantenedor do repositório) |
+| Yuri Campos Vilarino de Castro Costa | Documentação, gerência de configuração e revisão de PRs |
+| Yuri Nicole Silva | Fluxo de desenvolvimento, baseline e diagnóstico final |
 
-## ✨ Funcionalidades
+## 🧱 Arquitetura
 
-- **Landing page** responsiva e animada (Hero, Como adotar, Histórias, CTA).
-- **Autenticação** (login, cadastro e logout) com sessão e bloqueio de rotas
-  privadas — via Context API (`AuthContext`).
-- **CRUD 1 — Pets**: cadastro, edição, listagem e remoção dos animais do abrigo.
-- **CRUD 2 — Adoções**: processos de adoção, vinculando pet + voluntário (FKs).
-- **CRUD 3 — Voluntários**: equipe que ajuda no abrigo.
-- **Relatório com JOIN**: cruzamento Adoções × Pets × Voluntários, calculado no
-  backend (`GET /api/adoptions/report`).
+Duas aplicações independentes que conversam por HTTP:
 
-## 🛠️ Stack
+| Camada | Tecnologia | Porta |
+| --- | --- | --- |
+| `frontend/` | React 18 + Vite 5 + Tailwind CSS 3 + React Router 6 | 5173 (dev) |
+| `backend/` | Node.js + Express 4 (API REST) | 3333 |
+| Dados | Arquivo JSON local `backend/src/data/db.json` (gerado a partir do seed) | — |
+| Sessão de login | `localStorage` do navegador (modo demonstração) | — |
 
-| Camada       | Frontend                          | Backend              |
-| ------------ | --------------------------------- | -------------------- |
-| Runtime      | Vite + React 18                   | Node.js + Express    |
-| Roteamento   | React Router DOM v6               | Express Router       |
-| Estilização  | Tailwind CSS                      | —                    |
-| UI / Animação| Lucide React + Framer Motion      | —                    |
-| Persistência | localStorage (sessão de login)    | Arquivo JSON (`db.json`) |
+## ✅ Pré-requisitos
+
+- **Node.js 18.11 ou superior** (recomendado: 20 LTS — ver `.nvmrc`)
+- npm 9+
+- Git
 
 ## 🚀 Como executar
 
-São **UM processo** — abra um terminal.
+O sistema precisa de **dois processos** rodando ao mesmo tempo. Abra **dois terminais**.
 
-### Frontend (porta 5173)
+**Terminal 1 — backend (API):**
+
+```bash
+cd backend
+npm install
+npm run dev          # API em http://localhost:3333/api
+```
+
+**Terminal 2 — frontend:**
 
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev          # interface em http://localhost:5173
 ```
 
-Acesse **http://localhost:5173**. O frontend aponta para `http://localhost:3333/api`
-por padrão (sobrescreva com a variável de ambiente `VITE_API_URL`, se precisar).
+Teste rápido da API: `curl http://localhost:3333/api/health` deve responder `{"status":"ok",...}`.
 
-### 🔑 Conta de demonstração
+### Conta de demonstração
 
-O login usa um backend local (localStorage) e já vem com um usuário de teste:
+- E-mail: `demo@cafofopeludos.com`
+- Senha: `123456`
 
-- **E-mail:** `demo@cafofopeludos.com`
-- **Senha:** `123456`
+Na primeira execução o backend cria `backend/src/data/db.json` com 12 pets, 2 voluntários
+e 2 adoções de exemplo. Para voltar aos dados iniciais, apague esse arquivo e reinicie a API.
 
-Os dados das três entidades (pets, adoções, voluntários) são semeados pelo
-**backend** na primeira execução.
+### Variáveis de ambiente
 
-## 🗂️ Estrutura de pastas
+| Variável | Onde | Padrão | Descrição |
+| --- | --- | --- | --- |
+| `PORT` | backend | `3333` | Porta da API |
+| `VITE_API_URL` | frontend | `http://localhost:3333/api` | URL base da API |
+
+Modelos em `backend/.env.example` e `frontend/.env.example`.
+
+## 📜 Scripts
+
+| Pasta | Comando | Função |
+| --- | --- | --- |
+| backend | `npm run dev` | API com recarga automática (`node --watch`) |
+| backend | `npm start` | API em modo normal |
+| frontend | `npm run dev` | Servidor de desenvolvimento Vite |
+| frontend | `npm run build` | Build de produção em `frontend/dist` |
+| frontend | `npm run preview` | Serve o build localmente |
+| frontend | `npm run lint` | ESLint (0 avisos permitidos) |
+
+## 🗂️ Estrutura
 
 ```
 Cafofo/
-├── README.md
-├── frontend/                     # Aplicação React (interface)
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   ├── tailwind.config.js
+├── backend/
 │   └── src/
-│       ├── App.jsx               # Rotas
+│       ├── server.js            # inicialização e rotas
+│       ├── db.js                # persistência em arquivo JSON
+│       ├── data/seed.js         # dados iniciais (fotos em base64)
+│       └── routes/              # crudRouter genérico + pets, adoptions, volunteers
+├── frontend/
+│   └── src/
+│       ├── App.jsx              # rotas (públicas e protegidas)
 │       ├── context/AuthContext.jsx
-│       ├── services/             # Cliente da API REST
-│       │   ├── api.js            # fetch + fábrica de CRUD
-│       │   ├── petService.js        # CRUD 1
-│       │   ├── adoptionService.js   # CRUD 2 (+ relatório/JOIN)
-│       │   └── volunteerService.js  # CRUD 3
-│       ├── components/
-│       │   ├── pets/ adoptions/ volunteers/   # formulários dos CRUDs
-│       │   ├── layout/ ui/ landing/
-│       └── pages/                # Landing, Login, Dashboard, CRUDs, Relatório
-└── backend/                      # API REST (Express)
-    ├── package.json
-    └── src/
-        ├── server.js             # Inicialização + montagem das rotas
-        ├── db.js                 # CRUD genérico sobre db.json
-        ├── data/seed.js          # Dados iniciais
-        └── routes/
-            ├── crudRouter.js     # Fábrica de rotas REST genéricas
-            ├── pets.js           # CRUD 1
-            ├── adoptions.js      # CRUD 2 (+ /report)
-            └── volunteers.js     # CRUD 3
+│       ├── services/            # cliente da API (fetch)
+│       ├── components/          # layout, formulários, UI
+│       └── pages/               # Landing, Login, Dashboard, CRUDs, Relatório
+└── docs/qualidade/              # configuração da análise de qualidade
 ```
 
-## 🔌 Endpoints da API
+## 🔌 Endpoints
 
-| Método | Rota                    | Descrição                       |
-| ------ | ----------------------- | ------------------------------- |
-| CRUD   | `/api/pets`             | Pets                            |
-| CRUD   | `/api/adoptions`        | Adoções                         |
-| CRUD   | `/api/volunteers`       | Voluntários                     |
-| GET    | `/api/adoptions/report` | JOIN adoções × pets × volunt.   |
-| GET    | `/api/health`           | Healthcheck                     |
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| GET/POST | `/api/pets` | Lista / cria pets |
+| GET/PUT/DELETE | `/api/pets/:id` | Consulta / atualiza / remove pet |
+| GET/POST | `/api/volunteers` | Lista / cria voluntários |
+| GET/PUT/DELETE | `/api/volunteers/:id` | Consulta / atualiza / remove voluntário |
+| GET/POST | `/api/adoptions` | Lista / cria adoções (atualiza o status do pet) |
+| GET/PUT/DELETE | `/api/adoptions/:id` | Consulta / atualiza / remove adoção |
+| GET | `/api/adoptions/report` | Cruzamento adoções × pets × voluntários |
+| GET | `/api/health` | Verificação de saúde |
 
-## 💾 Persistência
+## ⚠️ Limitações conhecidas (baseline da Parte 1)
 
-Sem servidor de banco — roda direto após `npm install`:
+Registradas no diagnóstico de qualidade e tratadas na Parte 2:
 
-- **Dados** (pets, adoções, voluntários): gravados pelo backend em
-  `backend/src/data/db.json`, gerado a partir do seed na primeira execução.
-- **Sessão de login**: salva no `localStorage` do navegador (Context API).
+- A API **não exige autenticação**; a proteção de rotas existe só no frontend.
+- Usuários e senhas ficam no `localStorage` **em texto puro** (modo demonstração).
+- O botão "Entrar com Google" apenas simula uma sessão.
+- Excluir um pet com adoção vinculada deixa a adoção órfã.
+- Não há testes automatizados.
+
+## 🔁 Como contribuir
+
+Veja [CONTRIBUTING.md](CONTRIBUTING.md) (fluxo issue → branch → PR → revisão → merge → tag).
+Histórico de versões em [CHANGELOG.md](CHANGELOG.md).
