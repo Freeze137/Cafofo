@@ -3,7 +3,7 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/);
 versões seguem [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [1.0.0-baseline-p1] — 2026-09-25
+## [1.0.0-baseline-p1] — 2026-09-22
 
 Baseline da **Parte 1** do projeto de Qualidade de Software. O código-fonte é idêntico ao
 commit `2ffe964` (18/06/2026), usado nas medições de 22/09/2026.
