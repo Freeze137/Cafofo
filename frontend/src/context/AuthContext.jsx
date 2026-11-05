@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { STORAGE_PREFIX } from '../services/config'
-import { api } from '../services/api'
+import { api, UNAUTHORIZED_EVENT } from '../services/api'
 
 // ─────────────────────────────────────────────────────────────────────────
 // AuthContext — Gerenciamento de Estado da Sessão
@@ -50,7 +50,14 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false))
   }, [])
 
-  // 2.3 Handlers de Autenticação
+  // 2.3 Sessão recusada pela API (token expirado/inválido) → volta ao login.
+  useEffect(() => {
+    const onUnauthorized = () => setUser(null)
+    window.addEventListener(UNAUTHORIZED_EVENT, onUnauthorized)
+    return () => window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized)
+  }, [])
+
+  // 2.4 Handlers de Autenticação
   /** Persiste a sessão (token + dados públicos do usuário). */
   const persistSession = ({ token, user: u }) => {
     localStorage.setItem(SESSION_KEY, JSON.stringify({ token, user: u }))
@@ -84,7 +91,7 @@ export function AuthProvider({ children }) {
     [user, loading],
   )
 
-  // 2.4 Renderização do Provider
+  // 2.5 Renderização do Provider
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 

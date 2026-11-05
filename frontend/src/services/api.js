@@ -4,10 +4,16 @@ import { API_URL, STORAGE_PREFIX } from './config'
 // Cliente HTTP da API REST de adoção
 // ─────────────────────────────────────────────────────────────────────────
 
+const SESSION_KEY = `${STORAGE_PREFIX}:session`
+
+// Evento disparado quando a API recusa o token (401): o AuthContext encerra
+// a sessão e o ProtectedRoute leva o usuário de volta ao login.
+export const UNAUTHORIZED_EVENT = 'cafofo:unauthorized'
+
 // Token de sessão (JWT) salvo pelo AuthContext após login/cadastro.
 function authHeader() {
   try {
-    const token = JSON.parse(localStorage.getItem(`${STORAGE_PREFIX}:session`))?.token
+    const token = JSON.parse(localStorage.getItem(SESSION_KEY))?.token
     return token ? { Authorization: `Bearer ${token}` } : {}
   } catch {
     return {}
@@ -26,6 +32,13 @@ async function request(path, options = {}) {
 
   // Tenta ler a resposta do servidor
   const data = await res.json().catch(() => null)
+
+  // Sessão ausente/expirada numa rota protegida: encerra a sessão local.
+  // (Em /auth/login o 401 significa só "senha errada" e é tratado na tela.)
+  if (res.status === 401 && !path.startsWith('/auth/login')) {
+    localStorage.removeItem(SESSION_KEY)
+    window.dispatchEvent(new Event(UNAUTHORIZED_EVENT))
+  }
 
   //lança esse erro para o React mostrar na tela
   if (!res.ok) {
