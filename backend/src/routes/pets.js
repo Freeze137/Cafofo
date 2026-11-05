@@ -1,4 +1,5 @@
 import { crudRouter } from './crudRouter.js'
+import * as db from '../db.js'
 import {
   createValidator, requiredText, textWithDefault, optionalText,
   passthrough, integerBetween, oneOf,
@@ -20,5 +21,14 @@ export const validatePet = createValidator([
   oneOf('status', STATUS, 'Disponível', 'Status inválido.'),
 ])
 
+// Integridade (D2): um pet com adoção vinculada não pode ser excluído,
+// senão a adoção fica órfã ("Pet removido" no relatório).
+function removeConflict(petId) {
+  const linked = db.list('adoptions').filter((a) => String(a.petId) === String(petId))
+  if (linked.length > 0) {
+    return `Este pet possui ${linked.length} adoção(ões) vinculada(s). Exclua ou altere as adoções antes de removê-lo.`
+  }
+}
+
 // Cria e exporta todas as rotas
-export default crudRouter('pets', validatePet)
+export default crudRouter('pets', validatePet, { removeConflict })

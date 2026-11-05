@@ -13,8 +13,11 @@ import * as db from '../db.js'
 //   POST   /        → cria um registro
 //   PUT    /:id     → atualiza um registro
 //   DELETE /:id     → remove um registro
+//
+// `options.removeConflict(id)` (opcional) devolve uma mensagem quando o
+// registro não pode ser removido (ex.: pet com adoção vinculada) → 409.
 // ─────────────────────────────────────────────────────────────────────────
-export function crudRouter(collection, validate = (data) => ({ value: data })) {
+export function crudRouter(collection, validate = (data) => ({ value: data }), options = {}) {
   const router = Router() // Cria um novo roteador isolado
 
   //Retorna todos os itens da coleção
@@ -47,6 +50,8 @@ export function crudRouter(collection, validate = (data) => ({ value: data })) {
 
   //Remove um registro do banco pelo ID
   router.delete('/:id', (req, res) => {
+    const conflict = options.removeConflict?.(req.params.id)
+    if (conflict) return res.status(409).json({ error: conflict })
     const ok = db.remove(collection, req.params.id)
     if (!ok) return res.status(404).json({ error: 'Registro não encontrado.' })
     res.status(204).end()

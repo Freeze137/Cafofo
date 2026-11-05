@@ -25,6 +25,7 @@ export default function PetsPage() {
   const [error, setError] = useState('')
   const [editing, setEditing] = useState(null) // objeto pet ou {} (novo) ou null (fechado)
   const [removing, setRemoving] = useState(null)
+  const [actionError, setActionError] = useState('')
 
   const load = () => {
     setLoading(true)
@@ -43,9 +44,15 @@ export default function PetsPage() {
     load()
   }
 
+  // A API recusa (409) a exclusão de pet com adoção vinculada: mostra o motivo.
   const handleDelete = async () => {
-    await deletePet(removing.id)
-    load()
+    setActionError('')
+    try {
+      await deletePet(removing.id)
+      load()
+    } catch (e) {
+      setActionError(e.message)
+    }
   }
 
   return (
@@ -63,6 +70,12 @@ export default function PetsPage() {
       {error && (
         <div className="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
           {error} — verifique se o backend está rodando.
+        </div>
+      )}
+
+      {actionError && (
+        <div role="alert" className="mb-6 rounded-xl bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
+          {actionError}
         </div>
       )}
 
