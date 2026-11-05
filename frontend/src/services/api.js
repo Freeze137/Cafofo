@@ -1,13 +1,23 @@
-import { API_URL } from './config'
+import { API_URL, STORAGE_PREFIX } from './config'
 
 // ─────────────────────────────────────────────────────────────────────────
 // Cliente HTTP da API REST de adoção
 // ─────────────────────────────────────────────────────────────────────────
 
+// Token de sessão (JWT) salvo pelo AuthContext após login/cadastro.
+function authHeader() {
+  try {
+    const token = JSON.parse(localStorage.getItem(`${STORAGE_PREFIX}:session`))?.token
+    return token ? { Authorization: `Bearer ${token}` } : {}
+  } catch {
+    return {}
+  }
+}
+
 //Faz a ponte entre o Frontend e o Backend usando 'fetch'
 async function request(path, options = {}) {
   const res = await fetch(`${API_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
     ...options,
   })
 
