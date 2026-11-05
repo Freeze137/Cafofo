@@ -19,27 +19,38 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const DATA_DIR = join(__dirname, 'data')
 const DB_FILE = join(DATA_DIR, 'db.json')
 
+// Nos testes automatizados (o Vitest define VITEST) o banco fica só em
+// memória: nada é lido nem gravado em disco.
+const IN_MEMORY = Boolean(process.env.VITEST)
+
+// Estado inicial a partir do seed (cópia profunda, para o seed não ser
+// alterado em memória pelas operações do CRUD).
+function initialState() {
+  return structuredClone({
+    pets: SEED.pets ?? [],
+    volunteers: SEED.volunteers ?? [],
+    adoptions: SEED.adoptions ?? [],
+  })
+}
+
 // Carrega o banco do disco. Na primeira execução (arquivo inexistente),
 // popula com os dados iniciais do seed e grava.
 function load() {
-  if (existsSync(DB_FILE)) {
+  if (!IN_MEMORY && existsSync(DB_FILE)) {
     try {
       return JSON.parse(readFileSync(DB_FILE, 'utf-8'))
     } catch {
       // Arquivo corrompido: recomeça do seed.
     }
   }
-  const initial = {
-    pets: SEED.pets ?? [],
-    volunteers: SEED.volunteers ?? [],
-    adoptions: SEED.adoptions ?? [],
-  }
+  const initial = initialState()
   persist(initial)
   return initial
 }
 
 // Grava o estado completo no arquivo JSON.
 function persist(state) {
+  if (IN_MEMORY) return
   mkdirSync(DATA_DIR, { recursive: true })
   writeFileSync(DB_FILE, JSON.stringify(state, null, 2))
 }
@@ -94,4 +105,13 @@ export function remove(name, id) {
   rows.splice(index, 1)
   persist(store)
   return true
+}
+
+// Restaura o banco para os dados do seed (usado pelos testes automatizados).
+export function reset() {
+  const { pets, volunteers, adoptions } = initialState()
+  store.pets = pets
+  store.volunteers = volunteers
+  store.adoptions = adoptions
+  persist(store)
 }
