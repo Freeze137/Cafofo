@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import * as db from '../db.js'
+import { createValidator, requiredText, optionalText, oneOf } from '../validation/rules.js'
 
 // ─────────────────────────────────────────────────────────────────────────
 // CRUD 2 — Adoções (processos que vinculam um pet a um voluntário)
@@ -20,44 +21,28 @@ const PET_STATUS_BY_ADOPTION = {
   Concluída: 'Adotado',
   Cancelada: 'Disponível',
 }
-//Verifica se os dados enviados pelo usuário estão corretos
-// "partial = true" serve para atualizações parciais
-function validateAdoption(body = {}, { partial = false } = {}) {
-  const value = {}
-
-// Verifica se o pet foi existe
-  if (body.petId !== undefined) value.petId = String(body.petId).trim()
-  else if (!partial) return { error: 'Selecione o pet a ser adotado.' }
-  if (!partial && !value.petId) return { error: 'Selecione o pet a ser adotado.' }
-  // Confirma no banco de dados o ID do pet
-  if (value.petId && !db.getById('pets', value.petId)) {
-    return { error: 'Pet informado não existe.' }
-  }
-
-  // Confirma no banco de dados o ID do voluntário
-  if (body.volunteerId !== undefined) {
-    value.volunteerId = String(body.volunteerId).trim()
-    if (value.volunteerId && !db.getById('volunteers', value.volunteerId)) {
-      return { error: 'Voluntário informado não existe.' }
-    }
-  }
-
-  // tira espaços vazios das pontas
-  for (const field of ['adotante', 'contato', 'data', 'observacoes']) {
-    if (body[field] !== undefined) value[field] = String(body[field]).trim()
-  }
-
-  // Valida se o status está na lista de permitidos 
-  // Se for uma adoção nova fica 'Em análise' por padrão.
-  if (body.status !== undefined) {
-    if (!STATUS.includes(body.status)) return { error: 'Status inválido.' }
-    value.status = body.status
-  } else if (!partial) {
-    value.status = 'Em análise'
-  }
-
-  return { value }
+// Regras que dependem do banco: o pet e o voluntário precisam existir.
+const petMustExist = (_body, value) => {
+  if (value.petId && !db.getById('pets', value.petId)) return 'Pet informado não existe.'
 }
+
+const volunteerMustExist = (body, value) => {
+  if (body.volunteerId === undefined) return
+  value.volunteerId = String(body.volunteerId).trim()
+  if (value.volunteerId && !db.getById('volunteers', value.volunteerId)) {
+    return 'Voluntário informado não existe.'
+  }
+}
+
+// Verifica se os dados enviados estão corretos: cada linha é uma regra.
+// "partial = true" (atualização) não exige o pet nem aplica o status padrão.
+export const validateAdoption = createValidator([
+  requiredText('petId', 'Selecione o pet a ser adotado.'),
+  petMustExist,
+  volunteerMustExist,
+  optionalText('adotante', 'contato', 'data', 'observacoes'),
+  oneOf('status', STATUS, 'Em análise', 'Status inválido.'),
+])
 
 //Propaga o status da adoção para o pet vinculado
 // Chama o banco de dados para alterar o status do pet
