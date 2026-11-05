@@ -1,6 +1,5 @@
-import request from 'supertest'
 import { describe, it, expect, vi } from 'vitest'
-import app from '../src/app.js'
+import { api } from './helpers.js'
 import { errorHandler } from '../src/middleware/errorHandler.js'
 
 // D6 — JSON malformado devolvia página HTML com stack trace (issue #11).
@@ -9,7 +8,7 @@ const INTERNAL_DETAILS = /node_modules|SyntaxError|\bat \w|[A-Z]:\\|\/home\/|\/s
 
 describe('D6 - JSON malformado', () => {
   it('T06: responde 400 em JSON, sem stack trace nem caminhos internos', async () => {
-    const res = await request(app)
+    const res = await api
       .post('/api/pets')
       .set('Content-Type', 'application/json')
       .send('{nome:')
