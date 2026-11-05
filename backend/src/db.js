@@ -30,6 +30,7 @@ function initialState() {
     pets: SEED.pets ?? [],
     volunteers: SEED.volunteers ?? [],
     adoptions: SEED.adoptions ?? [],
+    users: SEED.users ?? [],
   })
 }
 
@@ -38,7 +39,8 @@ function initialState() {
 function load() {
   if (!IN_MEMORY && existsSync(DB_FILE)) {
     try {
-      return JSON.parse(readFileSync(DB_FILE, 'utf-8'))
+      // Coleções novas (ex.: users) que faltem num banco antigo vêm do seed.
+      return { ...initialState(), ...JSON.parse(readFileSync(DB_FILE, 'utf-8')) }
     } catch {
       // Arquivo corrompido: recomeça do seed.
     }
@@ -109,9 +111,10 @@ export function remove(name, id) {
 
 // Restaura o banco para os dados do seed (usado pelos testes automatizados).
 export function reset() {
-  const { pets, volunteers, adoptions } = initialState()
+  const { pets, volunteers, adoptions, users } = initialState()
   store.pets = pets
   store.volunteers = volunteers
   store.adoptions = adoptions
+  store.users = users
   persist(store)
 }
