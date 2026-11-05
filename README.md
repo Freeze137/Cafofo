@@ -22,14 +22,15 @@ Duas aplicações independentes que conversam por HTTP:
 
 | Camada | Tecnologia | Porta |
 | --- | --- | --- |
-| `frontend/` | React 18 + Vite 5 + Tailwind CSS 3 + React Router 6 | 5173 (dev) |
-| `backend/` | Node.js + Express 4 (API REST) | 3333 |
+| `frontend/` | React 18 + Vite 7 + Tailwind CSS 3 + React Router 7 | 5173 (dev) |
+| `backend/` | Node.js + Express 4 (API REST, autenticação JWT) | 3333 |
 | Dados | Arquivo JSON local `backend/src/data/db.json` (gerado a partir do seed) | — |
-| Sessão de login | `localStorage` do navegador (modo demonstração) | — |
+| Contas | Coleção `users` no mesmo `db.json`, senha só como hash bcrypt | — |
+| Sessão de login | Token JWT no `localStorage` do navegador (sem senha) | — |
 
 ## ✅ Pré-requisitos
 
-- **Node.js 18.11 ou superior** (recomendado: 20 LTS — ver `.nvmrc`)
+- **Node.js 22.12 ou superior** (22 LTS — ver `.nvmrc`; exigido pelo Vite 7 e pelo Vitest 5)
 - npm 9+
 - Git
 
@@ -42,6 +43,7 @@ O sistema precisa de **dois processos** rodando ao mesmo tempo. Abra **dois term
 ```bash
 cd backend
 npm install
+cp .env.example .env # defina JWT_SECRET (ver comentário no arquivo)
 npm run dev          # API em http://localhost:3333/api
 ```
 
@@ -60,14 +62,22 @@ Teste rápido da API: `curl http://localhost:3333/api/health` deve responder `{"
 - E-mail: `demo@cafofopeludos.com`
 - Senha: `123456`
 
-Na primeira execução o backend cria `backend/src/data/db.json` com 12 pets, 2 voluntários
-e 2 adoções de exemplo. Para voltar aos dados iniciais, apague esse arquivo e reinicie a API.
+Na primeira execução o backend cria `backend/src/data/db.json` com 12 pets, 2 voluntários,
+2 adoções e a conta de demonstração. Para voltar aos dados iniciais, apague esse arquivo e
+reinicie a API. **Quem já tinha um `db.json` da versão 1.0.0 deve apagá-lo**, para receber
+o seed corrigido (status dos pets) e a conta demo.
+
+Contas criadas na versão 1.0.0 ficavam só no navegador e não existem na API: basta se
+cadastrar de novo. Ao abrir o app, a lista antiga de usuários (com senhas em texto puro)
+é apagada do `localStorage`.
 
 ### Variáveis de ambiente
 
 | Variável | Onde | Padrão | Descrição |
 | --- | --- | --- | --- |
 | `PORT` | backend | `3333` | Porta da API |
+| `JWT_SECRET` | backend | aleatório a cada início | Segredo dos tokens de sessão (defina no `.env`) |
+| `JWT_EXPIRES_IN` | backend | `8h` | Validade do token |
 | `VITE_API_URL` | frontend | `http://localhost:3333/api` | URL base da API |
 
 Modelos em `backend/.env.example` e `frontend/.env.example`.
@@ -105,26 +115,43 @@ Cafofo/
 
 ## 🔌 Endpoints
 
+Todas as rotas de dados exigem o cabeçalho `Authorization: Bearer <token>`; sem ele a API
+responde **401**. O token vem de `/api/auth/login` ou `/api/auth/register`.
+
 | Método | Rota | Descrição |
 | --- | --- | --- |
+| POST | `/api/auth/register` | Cria conta (público) → `{ token, user }` |
+| POST | `/api/auth/login` | Entra com e-mail e senha (público) → `{ token, user }` |
+| GET | `/api/auth/me` | Usuário do token |
 | GET/POST | `/api/pets` | Lista / cria pets |
-| GET/PUT/DELETE | `/api/pets/:id` | Consulta / atualiza / remove pet |
+| GET/PUT/DELETE | `/api/pets/:id` | Consulta / atualiza / remove pet (409 se houver adoção vinculada) |
 | GET/POST | `/api/volunteers` | Lista / cria voluntários |
 | GET/PUT/DELETE | `/api/volunteers/:id` | Consulta / atualiza / remove voluntário |
 | GET/POST | `/api/adoptions` | Lista / cria adoções (atualiza o status do pet) |
 | GET/PUT/DELETE | `/api/adoptions/:id` | Consulta / atualiza / remove adoção |
 | GET | `/api/adoptions/report` | Cruzamento adoções × pets × voluntários |
-| GET | `/api/health` | Verificação de saúde |
+| GET | `/api/health` | Verificação de saúde (público) |
 
-## ⚠️ Limitações conhecidas (baseline da Parte 1)
+## 🧪 Testes e integração contínua
 
-Registradas no diagnóstico de qualidade e tratadas na Parte 2:
+```bash
+cd backend
+npm test             # Vitest + Supertest, com relatório de cobertura (backend/coverage/)
+```
 
-- A API **não exige autenticação**; a proteção de rotas existe só no frontend.
-- Usuários e senhas ficam no `localStorage` **em texto puro** (modo demonstração).
-- O botão "Entrar com Google" apenas simula uma sessão.
-- Excluir um pet com adoção vinculada deixa a adoção órfã.
-- Não há testes automatizados.
+O pipeline `.github/workflows/ci.yml` roda a cada push e pull request: no backend, testes
+com cobertura e `npm audit --audit-level=high`; no frontend, lint, build e auditoria.
+
+## ⚠️ Limitações conhecidas
+
+Corrigidas na versão 1.1.0 (Parte 2): API sem autenticação, senhas em texto puro, adoção
+órfã ao excluir pet, dados iniciais inconsistentes, validação de idade/e-mail só no
+formulário, erros com stack trace e ausência de testes. Seguem em aberto:
+
+- "Entrar com Google" ainda não está integrado (o botão informa isso e não cria sessão).
+- Todos os usuários têm o mesmo nível de acesso (não há perfis).
+- As fotos dos pets trafegam em base64 dentro do JSON (listagem pesada).
+- O frontend não tem testes automatizados.
 
 ## 🔁 Como contribuir
 

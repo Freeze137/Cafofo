@@ -1,11 +1,11 @@
 // ─────────────────────────────────────────────────────────────────────────
 // Estratégia de persistência
 //
-// O backend de dados é local (localStorage) no frontend, consumindo a API
-// REST do Express. Não há mais integração com Firebase.
+// Os dados e as contas ficam na API REST do Express (backend). O navegador
+// guarda só a sessão (token JWT) no localStorage.
 // ─────────────────────────────────────────────────────────────────────────
 
-// Prefixo das chaves no localStorage (usado pela autenticação local).
+// Prefixo das chaves no localStorage (sessão de login).
 export const STORAGE_PREFIX = 'cafofopeludos'
 
 // URL base da API REST de adoção (backend Express).

@@ -1,104 +1,80 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { STORAGE_PREFIX } from '../services/config'
+import { api, UNAUTHORIZED_EVENT } from '../services/api'
 
 // ─────────────────────────────────────────────────────────────────────────
 // AuthContext — Gerenciamento de Estado da Sessão
 //
 // Fornece login, cadastro, logout e o usuário atual para toda a aplicação
-// via Context API. A sessão é persistida no localStorage.
+// via Context API. Cadastro e login acontecem na API (/api/auth), que guarda
+// apenas o hash bcrypt da senha. O navegador guarda só o token de sessão
+// (JWT) e os dados públicos do usuário — nunca a senha.
 // ─────────────────────────────────────────────────────────────────────────
 
 const AuthContext = createContext(null)
 
-// ── 1. Configurações e Mock ──────────────────────────────────────────────
+// ── 1. Chaves do localStorage ────────────────────────────────────────────
 const SESSION_KEY = `${STORAGE_PREFIX}:session`
-const USERS_KEY = `${STORAGE_PREFIX}:users`
+// Versões antigas guardavam a lista de usuários COM SENHA em texto puro
+// nesta chave. Ela é apagada ao abrir o app (migração da issue #9).
+const LEGACY_USERS_KEY = `${STORAGE_PREFIX}:users`
 
-// Usuário demonstração disponível já no primeiro acesso.
-const DEMO_USER = {
-  id: 'user-demo',
-  nome: 'Cliente Demo',
-  email: 'demo@cafofopeludos.com',
-  senha: '123456',
-  photoURL: null,
-}
-
-// ── 2. Helpers (Modo Local) ──────────────────────────────────────────────
-// Funções auxiliares para ler e escrever a lista de usuários no localStorage.
-function readUsers() {
+function readSession() {
   try {
-    const raw = localStorage.getItem(USERS_KEY)
-    const users = raw ? JSON.parse(raw) : []
-    // Garante que o usuário demo sempre exista.
-    if (!users.some((u) => u.email === DEMO_USER.email)) users.push(DEMO_USER)
-    return users
+    const saved = JSON.parse(localStorage.getItem(SESSION_KEY))
+    return saved?.token && saved?.user ? saved : null
   } catch {
-    return [DEMO_USER]
+    return null
   }
 }
 
-function writeUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users))
-}
-
-// ── 3. Provider de Autenticação ──────────────────────────────────────────
+// ── 2. Provider de Autenticação ──────────────────────────────────────────
 export function AuthProvider({ children }) {
-  // 3.1 Estados
+  // 2.1 Estados
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // 3.2 Efeito de Inicialização (Restauração de Sessão)
-  // Executado apenas uma vez quando o app abre. Lê a sessão salva
-  // no localStorage, se houver.
+  // 2.2 Inicialização: remove dados legados e restaura a sessão, conferindo
+  // na API se o token ainda é válido.
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(SESSION_KEY)
-      if (saved) setUser(JSON.parse(saved))
-    } catch {
-      /* ignora sessão corrompida */
+    localStorage.removeItem(LEGACY_USERS_KEY)
+    const saved = readSession()
+    if (!saved) {
+      setLoading(false)
+      return
     }
-    setLoading(false)
+    api
+      .get('/auth/me')
+      .then((me) => setUser(me))
+      .catch(() => localStorage.removeItem(SESSION_KEY))
+      .finally(() => setLoading(false))
   }, [])
 
-  // 3.3 Handlers de Autenticação
-  /** Persiste a sessão local. */
-  const persistSession = (u) => {
+  // 2.3 Sessão recusada pela API (token expirado/inválido) → volta ao login.
+  useEffect(() => {
+    const onUnauthorized = () => setUser(null)
+    window.addEventListener(UNAUTHORIZED_EVENT, onUnauthorized)
+    return () => window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized)
+  }, [])
+
+  // 2.4 Handlers de Autenticação
+  /** Persiste a sessão (token + dados públicos do usuário). */
+  const persistSession = ({ token, user: u }) => {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ token, user: u }))
     setUser(u)
-    localStorage.setItem(SESSION_KEY, JSON.stringify(u))
+    return u
   }
 
-  /** Login com e-mail e senha. */
-  const login = async (email, senha) => {
-    const found = readUsers().find(
-      (u) => u.email === email.trim().toLowerCase() && u.senha === senha,
-    )
-    if (!found) throw new Error('E-mail ou senha inválidos.')
-    const { senha: _omit, ...safe } = found
-    persistSession(safe)
-    return safe
-  }
+  /** Login com e-mail e senha (validado na API). */
+  const login = async (email, senha) => persistSession(await api.post('/auth/login', { email, senha }))
 
-  /** Cadastro de novo usuário. */
-  const register = async (nome, email, senha) => {
-    const users = readUsers()
-    const normalized = email.trim().toLowerCase()
-    if (users.some((u) => u.email === normalized))
-      throw new Error('Este e-mail já está cadastrado.')
-    const newUser = { id: `user-${Date.now()}`, nome, email: normalized, senha, photoURL: null }
-    writeUsers([...users, newUser])
-    const { senha: _omit, ...safe } = newUser
-    persistSession(safe)
-    return safe
-  }
+  /** Cadastro de novo usuário (a API grava só o hash da senha). */
+  const register = async (nome, email, senha) =>
+    persistSession(await api.post('/auth/register', { nome, email, senha }))
 
-  /** Login com Google (demonstração no modo local). */
+  /** Login com Google: ainda não integrado (D8). Não cria sessão falsa. */
   const loginWithGoogle = async () => {
-    persistSession({
-      id: 'user-google-demo',
-      nome: 'Usuário Google',
-      email: 'google@cafofopeludos.com',
-      photoURL: null,
-    })
+    throw new Error('Login com Google ainda não está disponível. Entre com e-mail e senha.')
   }
 
   /** Encerra a sessão. */
@@ -115,11 +91,11 @@ export function AuthProvider({ children }) {
     [user, loading],
   )
 
-  // 3.4 Renderização do Provider
+  // 2.5 Renderização do Provider
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-// ── 4. Hook Customizado ──────────────────────────────────────────────────
+// ── 3. Hook Customizado ──────────────────────────────────────────────────
 /** Hook de acesso ao contexto de autenticação. */
 export function useAuth() {
   const ctx = useContext(AuthContext)

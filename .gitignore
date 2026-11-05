@@ -24,3 +24,8 @@ npm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Relatórios de cobertura e da análise de qualidade
+coverage
+relatorio-eslint.html
+relatorio-jscpd
