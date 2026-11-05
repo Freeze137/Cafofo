@@ -7,7 +7,7 @@ import { crudRouter } from './crudRouter.js'
 const STATUS = ['Disponível', 'Em processo', 'Adotado']
 
 // Limpa e valida os dados enviados
-function validatePet(body = {}, { partial = false } = {}) {
+export function validatePet(body = {}, { partial = false } = {}) {
   const value = {}
 
   // Exige que o nome seja preenchido

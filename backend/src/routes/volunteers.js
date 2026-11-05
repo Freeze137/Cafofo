@@ -5,7 +5,7 @@ import { crudRouter } from './crudRouter.js'
 // ─────────────────────────────────────────────────────────────────────────
 
 // Limpa e valida os dados
-function validateVolunteer(body = {}, { partial = false } = {}) {
+export function validateVolunteer(body = {}, { partial = false } = {}) {
   const value = {}
 
   // Exige que o nome nao fique em branco

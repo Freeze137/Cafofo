@@ -22,7 +22,7 @@ const PET_STATUS_BY_ADOPTION = {
 }
 //Verifica se os dados enviados pelo usuário estão corretos
 // "partial = true" serve para atualizações parciais
-function validateAdoption(body = {}, { partial = false } = {}) {
+export function validateAdoption(body = {}, { partial = false } = {}) {
   const value = {}
 
 // Verifica se o pet foi existe
