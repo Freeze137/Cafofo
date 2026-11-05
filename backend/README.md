@@ -9,6 +9,7 @@ primeira execução.
 ```bash
 cd backend
 npm install
+cp .env.example .env   # defina JWT_SECRET
 npm run dev      # com --watch (recarrega ao salvar)
 # ou
 npm start
@@ -16,9 +17,21 @@ npm start
 
 A API sobe em `http://localhost:3333/api` (porta configurável via `PORT`).
 
+## Testes
+
+```bash
+npm test         # Vitest + Supertest com cobertura (v8)
+```
+
+## Autenticação
+
+`POST /api/auth/register` e `POST /api/auth/login` devolvem `{ token, user }`. As rotas de
+dados exigem `Authorization: Bearer <token>` (401 sem ele). Senhas são gravadas só como
+hash bcrypt. Erros são sempre respondidos em JSON (`{ "error": "..." }`), sem stack trace.
+
 ## Endpoints
 
-Cada entidade expõe um CRUD REST completo:
+Cada entidade expõe um CRUD REST completo (todas exigem token):
 
 | Método | Rota                     | Ação                          |
 | ------ | ------------------------ | ----------------------------- |
@@ -26,7 +39,7 @@ Cada entidade expõe um CRUD REST completo:
 | GET    | `/api/pets/:id`          | Busca um pet                  |
 | POST   | `/api/pets`              | Cria pet                      |
 | PUT    | `/api/pets/:id`          | Atualiza pet                  |
-| DELETE | `/api/pets/:id`          | Remove pet                    |
+| DELETE | `/api/pets/:id`          | Remove pet (409 se houver adoção) |
 | ...    | `/api/volunteers`        | CRUD de voluntários           |
 | ...    | `/api/adoptions`         | CRUD de adoções               |
 | GET    | `/api/adoptions/report`  | JOIN adoções × pets × volunt. |
