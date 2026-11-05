@@ -5,6 +5,7 @@ import petsRouter from './routes/pets.js'
 import adoptionsRouter from './routes/adoptions.js'
 import volunteersRouter from './routes/volunteers.js'
 import authRouter from './routes/auth.js'
+import { requireAuth } from './auth/token.js'
 import { errorHandler } from './middleware/errorHandler.js'
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -34,10 +35,11 @@ app.get('/api/health', (_req, res) => {
 // Contas de usuário (cadastro e login).
 app.use('/api/auth', authRouter)
 
-// Rotas dos CRUDs.
-app.use('/api/pets', petsRouter)
-app.use('/api/adoptions', adoptionsRouter)
-app.use('/api/volunteers', volunteersRouter)
+// Rotas dos CRUDs: exigem token válido (Authorization: Bearer <JWT>).
+// Sem token → 401. Só /api/health e /api/auth são públicas.
+app.use('/api/pets', requireAuth, petsRouter)
+app.use('/api/adoptions', requireAuth, adoptionsRouter)
+app.use('/api/volunteers', requireAuth, volunteersRouter)
 
 // 404 para rotas desconhecidas da API.
 app.use((_req, res) => {
