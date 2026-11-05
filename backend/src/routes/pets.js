@@ -1,7 +1,7 @@
 import { crudRouter } from './crudRouter.js'
 import {
   createValidator, requiredText, textWithDefault, optionalText,
-  passthrough, toNumber, oneOf,
+  passthrough, integerBetween, oneOf,
 } from '../validation/rules.js'
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -16,7 +16,7 @@ export const validatePet = createValidator([
   textWithDefault('especie', ''),
   optionalText('raca', 'porte', 'sexo', 'cor', 'descricao'),
   passthrough('foto'), // base64 ou null
-  toNumber('idade'),
+  integerBetween('idade', 0, 30, 'A idade deve ser um número inteiro entre 0 e 30.'),
   oneOf('status', STATUS, 'Disponível', 'Status inválido.'),
 ])
 

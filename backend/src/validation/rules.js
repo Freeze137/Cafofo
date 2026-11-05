@@ -68,13 +68,35 @@ export const passthrough = (field) => (body, value) => {
   if (has(body, field)) write(value, field, read(body, field))
 }
 
-/** Converte para número; valores não numéricos viram 0. */
-export const toNumber = (field) => (body, value) => {
-  if (has(body, field)) write(value, field, Number(read(body, field)) || 0)
-}
-
 /** Converte para booleano, com padrão na criação. */
 export const toBoolean = (field, fallback) => (body, value, partial) => {
   if (has(body, field)) write(value, field, Boolean(read(body, field)))
   else if (!partial) write(value, field, fallback)
+}
+
+/**
+ * Número inteiro dentro de um intervalo. Vazio ou null vira 0 (campo
+ * opcional no formulário); qualquer outro valor fora da regra é recusado.
+ */
+export const integerBetween = (field, min, max, message) => (body, value) => {
+  if (!has(body, field)) return
+  const raw = read(body, field)
+  if (raw === '' || raw === null) {
+    write(value, field, 0)
+    return
+  }
+  const number = Number(raw)
+  if (!Number.isInteger(number) || number < min || number > max) return message
+  write(value, field, number)
+}
+
+// Formato simples de e-mail: algo@dominio.ext, sem espaços.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+/** E-mail opcional: se informado, precisa ter formato válido. */
+export const email = (field, message) => (body, value) => {
+  if (!has(body, field)) return
+  const text = trimmed(body, field)
+  if (text && !EMAIL_PATTERN.test(text)) return message
+  write(value, field, text)
 }
