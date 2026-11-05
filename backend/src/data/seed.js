@@ -50,4 +50,10 @@ export const SEED = {
     { id: 'adoption-1', petId: 'pet-3', volunteerId: 'volunteer-2', adotante: 'Carlos Mendes', contato: '(11) 96666-3030', data: '2026-06-10', status: 'Em análise', observacoes: 'Visita ao abrigo agendada.', createdAt: now() },
     { id: 'adoption-2', petId: 'pet-4', volunteerId: 'volunteer-1', adotante: 'Fernanda Lopes', contato: '(11) 95555-4040', data: '2026-05-28', status: 'Concluída', observacoes: 'Adoção finalizada com sucesso.', createdAt: now() },
   ],
+  // ── Usuários (contas de acesso) ──────────────────────────────────────
+  // Conta de demonstração: demo@cafofopeludos.com / 123456.
+  // Só o hash bcrypt fica gravado — nunca a senha em texto puro.
+  users: [
+    { id: 'user-demo', nome: 'Cliente Demo', email: 'demo@cafofopeludos.com', senhaHash: '$2b$10$2oj3Bbq27ScDxUpwu.iux.ZvAJde.pOeiBcBM07CrQGl9jzHkMYQ6', photoURL: null, createdAt: now() },
+  ],
 }
