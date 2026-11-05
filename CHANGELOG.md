@@ -30,7 +30,7 @@ Versão da **Parte 2** do projeto de Qualidade de Software (plano: issue #5).
 - Testes automatizados com Vitest + Supertest e cobertura v8 (`npm test` no backend) (#12).
 - Pipeline de CI no GitHub Actions (`.github/workflows/ci.yml`) (#12).
 
-## [1.0.0-baseline-p1] — 2026-09-25
+## [1.0.0-baseline-p1] — 2026-09-22
 
 Baseline da **Parte 1** do projeto de Qualidade de Software. O código-fonte é idêntico ao
 commit `2ffe964` (18/06/2026), usado nas medições de 22/09/2026.
