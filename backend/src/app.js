@@ -4,6 +4,7 @@ import cors from 'cors'
 import petsRouter from './routes/pets.js'
 import adoptionsRouter from './routes/adoptions.js'
 import volunteersRouter from './routes/volunteers.js'
+import { errorHandler } from './middleware/errorHandler.js'
 
 // ─────────────────────────────────────────────────────────────────────────
 // CAFOFO ADOÇÃO — Aplicação Express
@@ -37,5 +38,8 @@ app.use('/api/volunteers', volunteersRouter)
 app.use((_req, res) => {
   res.status(404).json({ error: 'Rota não encontrada.' })
 })
+
+// Erros (JSON malformado, exceções) sempre em JSON, sem stack trace.
+app.use(errorHandler)
 
 export default app
