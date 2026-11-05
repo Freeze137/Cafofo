@@ -29,7 +29,7 @@ Duas aplicações independentes que conversam por HTTP:
 
 ## ✅ Pré-requisitos
 
-- **Node.js 18.11 ou superior** (recomendado: 20 LTS — ver `.nvmrc`)
+- **Node.js 22.12 ou superior** (22 LTS — ver `.nvmrc`; exigido pelo Vite 7 e pelo Vitest 5)
 - npm 9+
 - Git
 
